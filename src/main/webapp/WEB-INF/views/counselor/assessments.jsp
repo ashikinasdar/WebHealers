@@ -195,6 +195,14 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
           <h4 class="mb-0">
             <i class="fas fa-clipboard-list me-2"></i>Assessment Management
           </h4>
+          <button
+            type="button"
+            class="btn btn-success"
+            data-bs-toggle="modal"
+            data-bs-target="#createTypeModal"
+          >
+            <i class="fas fa-plus-circle me-2"></i>Create New Assessment Type
+          </button>
         </div>
       </nav>
 
@@ -588,12 +596,133 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
                         <i class="fas fa-list me-1"></i>Manage Questions
                         (${type.totalQuestions})
                       </button>
+                      <form
+                        action="${pageContext.request.contextPath}/counselor/assessment/type/${type.assessmentTypeId}/toggle"
+                        method="post"
+                        style="display: inline"
+                      >
+                        <button
+                          type="submit"
+                          class="btn btn-sm ${type.active ? 'btn-outline-warning' : 'btn-outline-success'}"
+                        >
+                          <i
+                            class="fas ${type.active ? 'fa-eye-slash' : 'fa-eye'} me-1"
+                          ></i>
+                          ${type.active ? 'Deactivate' : 'Activate'}
+                        </button>
+                      </form>
                     </div>
                   </div>
                 </c:forEach>
               </c:otherwise>
             </c:choose>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create Assessment Type Modal -->
+    <div class="modal fade" id="createTypeModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fas fa-plus-circle me-2"></i>Create New Assessment Type
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <form
+            action="${pageContext.request.contextPath}/counselor/assessment/type/create"
+            method="post"
+          >
+            <div class="modal-body">
+              <div class="mb-3">
+                <label class="form-label"
+                  >Assessment Name <span class="text-danger">*</span></label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  name="name"
+                  placeholder="e.g., PHQ-9, GAD-7, DASS-21"
+                  required
+                />
+                <small class="text-muted"
+                  >Choose a clear, recognizable name for this assessment</small
+                >
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label"
+                  >Description <span class="text-danger">*</span></label
+                >
+                <textarea
+                  class="form-control"
+                  name="description"
+                  rows="3"
+                  placeholder="Describe what this assessment measures..."
+                  required
+                ></textarea>
+                <small class="text-muted"
+                  >This will be shown to students when they select an
+                  assessment</small
+                >
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label"
+                  >Scoring Method <span class="text-danger">*</span></label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  name="scoringMethod"
+                  placeholder="e.g., Sum scores, Sum and multiply by 2"
+                  required
+                />
+                <small class="text-muted"
+                  >Explain how the assessment is scored</small
+                >
+              </div>
+
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  name="isActive"
+                  value="true"
+                  id="isActiveCheck"
+                  checked
+                />
+                <label class="form-check-label" for="isActiveCheck">
+                  Make this assessment active (students can take it immediately)
+                </label>
+              </div>
+
+              <div class="alert alert-info mt-3 mb-0">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Next Steps:</strong> After creating this assessment
+                type, you'll need to add questions to it before students can
+                take it.
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="btn btn-success">
+                <i class="fas fa-plus-circle me-1"></i>Create Assessment Type
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
