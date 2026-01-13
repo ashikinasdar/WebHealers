@@ -1,13 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forum - SerenityHub</title>
+    <title>Search Results - SerenityHub Forum</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -54,18 +53,10 @@
             margin-bottom: 15px;
             transition: all 0.3s;
             border-left: 4px solid #667eea;
-            cursor: pointer;
         }
         .thread-card:hover {
             transform: translateX(5px);
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-        .thread-title-link {
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-        .thread-title-link:hover {
-            color: #667eea !important;
         }
         .thread-avatar {
             width: 50px;
@@ -88,19 +79,6 @@
         .stat-item i {
             margin-right: 5px;
             color: #667eea;
-        }
-        .btn-create {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            color: white;
-            padding: 12px 30px;
-            border-radius: 10px;
-            transition: all 0.3s;
-        }
-        .btn-create:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-            color: white;
         }
         .badge-anonymous {
             background: #fef3c7;
@@ -132,31 +110,11 @@
             font-weight: 600;
             margin: 0;
         }
-        .quick-links {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .quick-link-btn {
-            background: white;
-            border: 2px solid #e2e8f0;
-            padding: 10px 20px;
+        .search-info {
+            background: #e6f3ff;
+            padding: 15px 20px;
             border-radius: 10px;
-            text-decoration: none;
-            color: #4a5568;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .quick-link-btn:hover {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
-            transform: translateY(-2px);
-        }
-        .quick-link-btn i {
-            font-size: 16px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -200,42 +158,11 @@
         <!-- Top Navbar -->
         <nav class="navbar navbar-expand-lg navbar-light rounded">
             <div class="container-fluid">
-                <h4 class="mb-0"><i class="fas fa-comments me-2"></i>Peer Support Forum</h4>
-                <a href="${pageContext.request.contextPath}/student/forum/create" class="btn btn-create">
-                    <i class="fas fa-plus me-2"></i>New Thread
+                <a href="${pageContext.request.contextPath}/student/forum" class="text-decoration-none text-dark">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Forum
                 </a>
             </div>
         </nav>
-
-        <!-- Quick Links -->
-        <div class="quick-links">
-            <a href="${pageContext.request.contextPath}/student/forum" class="quick-link-btn">
-                <i class="fas fa-list"></i>
-                All Discussions
-            </a>
-            <a href="${pageContext.request.contextPath}/student/forum/popular" class="quick-link-btn">
-                <i class="fas fa-fire"></i>
-                Popular
-            </a>
-            <a href="${pageContext.request.contextPath}/student/forum/my-posts" class="quick-link-btn">
-                <i class="fas fa-user-edit"></i>
-                My Posts
-            </a>
-        </div>
-
-        <!-- Success/Error Messages -->
-        <c:if test="${not empty success}">
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fas fa-check-circle me-2"></i>${success}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        </c:if>
-        <c:if test="${not empty error}">
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fas fa-exclamation-circle me-2"></i>${error}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        </c:if>
 
         <!-- Search Box -->
         <div class="search-box">
@@ -246,22 +173,30 @@
                     </span>
                     <input type="text" class="form-control border-start-0" 
                            name="keyword" placeholder="Search discussions..." 
+                           value="${keyword}"
                            style="box-shadow: none;">
                     <button class="btn btn-outline-primary" type="submit">Search</button>
                 </div>
             </form>
         </div>
 
+        <!-- Search Results Info -->
+        <div class="search-info">
+            <i class="fas fa-search me-2"></i>
+            <strong>${threads.size()}</strong> results found for 
+            <strong>"${keyword}"</strong>
+        </div>
+
         <!-- Forum Threads -->
         <c:choose>
             <c:when test="${empty threads}">
                 <div class="text-center py-5">
-                    <i class="fas fa-comments fa-4x text-muted mb-3"></i>
-                    <h5 class="text-muted">No discussions yet</h5>
-                    <p class="text-muted">Be the first to start a conversation!</p>
-                    <a href="${pageContext.request.contextPath}/student/forum/create" 
-                       class="btn btn-create mt-3">
-                        <i class="fas fa-plus me-2"></i>Create Thread
+                    <i class="fas fa-search fa-4x text-muted mb-3"></i>
+                    <h5 class="text-muted">No results found</h5>
+                    <p class="text-muted">Try different keywords or browse all discussions</p>
+                    <a href="${pageContext.request.contextPath}/student/forum" 
+                       class="btn btn-primary mt-3">
+                        <i class="fas fa-list me-2"></i>View All Discussions
                     </a>
                 </div>
             </c:when>
@@ -275,16 +210,16 @@
                                         <i class="fas fa-user-secret"></i>
                                     </c:when>
                                     <c:otherwise>
-                                        ${fn:substring(thread.author_name, 0, 1)}
+                                        ${thread.author_name.substring(0,1).toUpperCase()}
                                     </c:otherwise>
                                 </c:choose>
                             </div>
                             <div class="ms-3 flex-grow-1">
                                 <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <div class="flex-grow-1">
+                                    <div>
                                         <h5 class="mb-1">
                                             <a href="${pageContext.request.contextPath}/student/forum/thread/${thread.thread_id}" 
-                                               class="text-decoration-none text-dark thread-title-link">
+                                               class="text-decoration-none text-dark">
                                                 ${thread.title}
                                             </a>
                                         </h5>
