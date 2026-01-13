@@ -69,19 +69,19 @@ public class AssessmentDAO {
         return result;
     };
 
-    /*get all assessment types*/
+    /* get all assessment types */
     public List<AssessmentType> findAllTypes() {
         String sql = "SELECT * FROM assessment_types ORDER BY name";
         return jdbcTemplate.query(sql, typeRowMapper);
     }
 
-    /*get active assessment types*/
+    /* get active assessment types */
     public List<AssessmentType> findActiveTypes() {
         String sql = "SELECT * FROM assessment_types WHERE is_active = TRUE ORDER BY name";
         return jdbcTemplate.query(sql, typeRowMapper);
     }
 
-    /*get assessment type by ID*/
+    /* get assessment type by ID */
     public AssessmentType findTypeById(int typeId) {
         String sql = "SELECT * FROM assessment_types WHERE assessment_type_id = ?";
         try {
@@ -91,7 +91,7 @@ public class AssessmentDAO {
         }
     }
 
-    /*get questions for an assessment type*/
+    /* get questions for an assessment type */
     public List<AssessmentQuestion> findQuestionsByTypeId(int typeId) {
         String sql = "SELECT * FROM assessment_questions " +
                 "WHERE assessment_type_id = ? " +
@@ -99,7 +99,7 @@ public class AssessmentDAO {
         return jdbcTemplate.query(sql, questionRowMapper, typeId);
     }
 
-    /*get questions by category*/
+    /* get questions by category */
     public List<AssessmentQuestion> findQuestionsByCategory(int typeId, String category) {
         String sql = "SELECT * FROM assessment_questions " +
                 "WHERE assessment_type_id = ? AND category = ? " +
@@ -107,7 +107,7 @@ public class AssessmentDAO {
         return jdbcTemplate.query(sql, questionRowMapper, typeId, category);
     }
 
-    /*get question by ID*/
+    /* get question by ID */
     public AssessmentQuestion findQuestionById(int questionId) {
         String sql = "SELECT * FROM assessment_questions WHERE assessment_question_id = ?";
         try {
@@ -117,7 +117,53 @@ public class AssessmentDAO {
         }
     }
 
-    /*create assessment question*/
+    /**
+     * Create new assessment type
+     */
+    public int createAssessmentType(AssessmentType assessmentType) {
+        String sql = "INSERT INTO assessment_types (name, description, total_questions, scoring_method, is_active) " +
+                "VALUES (?, ?, ?, ?, ?)";
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, assessmentType.getName());
+            ps.setString(2, assessmentType.getDescription());
+            ps.setInt(3, assessmentType.getTotalQuestions());
+            ps.setString(4, assessmentType.getScoringMethod());
+            ps.setBoolean(5, assessmentType.isActive());
+            return ps;
+        }, keyHolder);
+
+        return keyHolder.getKey().intValue();
+    }
+
+    /**
+     * Update assessment type
+     */
+    public boolean updateAssessmentType(AssessmentType assessmentType) {
+        String sql = "UPDATE assessment_types SET name = ?, description = ?, " +
+                "scoring_method = ?, is_active = ? WHERE assessment_type_id = ?";
+        int rows = jdbcTemplate.update(sql,
+                assessmentType.getName(),
+                assessmentType.getDescription(),
+                assessmentType.getScoringMethod(),
+                assessmentType.isActive(),
+                assessmentType.getAssessmentTypeId());
+        return rows > 0;
+    }
+
+    /**
+     * Toggle assessment type status
+     */
+    public boolean toggleAssessmentTypeStatus(int typeId) {
+        String sql = "UPDATE assessment_types SET is_active = NOT is_active WHERE assessment_type_id = ?";
+        int rows = jdbcTemplate.update(sql, typeId);
+        return rows > 0;
+    }
+
+    /* create assessment question */
     public int createQuestion(AssessmentQuestion question) {
         String sql = "INSERT INTO assessment_questions (assessment_type_id, question_text, " +
                 "category, display_order) VALUES (?, ?, ?, ?)";
@@ -136,7 +182,7 @@ public class AssessmentDAO {
         return keyHolder.getKey().intValue();
     }
 
-    /*update assessment question*/
+    /* update assessment question */
     public boolean updateQuestion(AssessmentQuestion question) {
         String sql = "UPDATE assessment_questions SET question_text = ?, category = ?, " +
                 "display_order = ? WHERE assessment_question_id = ?";
@@ -148,14 +194,14 @@ public class AssessmentDAO {
         return rows > 0;
     }
 
-    /*delete assessment question*/
+    /* delete assessment question */
     public boolean deleteQuestion(int questionId) {
         String sql = "DELETE FROM assessment_questions WHERE assessment_question_id = ?";
         int rows = jdbcTemplate.update(sql, questionId);
         return rows > 0;
     }
 
-    /*create assessment result*/
+    /* create assessment result */
     public int createResult(AssessmentResult result) {
         String sql = "INSERT INTO assessment_results (student_id, assessment_type_id, " +
                 "depression_score, anxiety_score, stress_score, overall_severity, recommendations) " +
@@ -178,7 +224,7 @@ public class AssessmentDAO {
         return keyHolder.getKey().intValue();
     }
 
-    /*find result by ID*/
+    /* find result by ID */
     public AssessmentResult findResultById(int resultId) {
         String sql = "SELECT ar.*, at.name as assessment_name, u.full_name as student_name " +
                 "FROM assessment_results ar " +
@@ -193,7 +239,7 @@ public class AssessmentDAO {
         }
     }
 
-    /*find results by student ID*/
+    /* find results by student ID */
     public List<AssessmentResult> findResultsByStudentId(int studentId) {
         String sql = "SELECT ar.*, at.name as assessment_name, u.full_name as student_name " +
                 "FROM assessment_results ar " +
@@ -205,7 +251,7 @@ public class AssessmentDAO {
         return jdbcTemplate.query(sql, resultRowMapper, studentId);
     }
 
-    /*find recent results by student ID*/
+    /* find recent results by student ID */
     public List<AssessmentResult> findRecentResultsByStudentId(int studentId, int limit) {
         String sql = "SELECT ar.*, at.name as assessment_name, u.full_name as student_name " +
                 "FROM assessment_results ar " +
@@ -218,7 +264,7 @@ public class AssessmentDAO {
         return jdbcTemplate.query(sql, resultRowMapper, studentId, limit);
     }
 
-    /*find all results*/
+    /* find all results */
     public List<AssessmentResult> findAllResults() {
         String sql = "SELECT ar.*, at.name as assessment_name, u.full_name as student_name " +
                 "FROM assessment_results ar " +
@@ -229,7 +275,7 @@ public class AssessmentDAO {
         return jdbcTemplate.query(sql, resultRowMapper);
     }
 
-    /*find results by severity*/
+    /* find results by severity */
     public List<AssessmentResult> findResultsBySeverity(AssessmentResult.Severity severity) {
         String sql = "SELECT ar.*, at.name as assessment_name, u.full_name as student_name " +
                 "FROM assessment_results ar " +
@@ -241,19 +287,19 @@ public class AssessmentDAO {
         return jdbcTemplate.query(sql, resultRowMapper, severity.toString());
     }
 
-    /*count by student ID*/
+    /* count by student ID */
     public int countByStudentId(int studentId) {
         String sql = "SELECT COUNT(*) FROM assessment_results WHERE student_id = ?";
         return jdbcTemplate.queryForObject(sql, Integer.class, studentId);
     }
 
-    /*count all results*/
+    /* count all results */
     public int countAllResults() {
         String sql = "SELECT COUNT(*) FROM assessment_results";
         return jdbcTemplate.queryForObject(sql, Integer.class);
     }
 
-    /*find latest result for student and assessment type*/
+    /* find latest result for student and assessment type */
     public AssessmentResult findLatestResult(int studentId, int assessmentTypeId) {
         String sql = "SELECT ar.*, at.name as assessment_name, u.full_name as student_name " +
                 "FROM assessment_results ar " +

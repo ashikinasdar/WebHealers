@@ -18,47 +18,68 @@ public class AssessmentService {
     @Autowired
     private AssessmentDAO assessmentDAO;
 
-    /*get all assessment types*/
+    /* get all assessment types */
     public List<AssessmentType> getAllAssessmentTypes() {
         return assessmentDAO.findAllTypes();
     }
 
-    /*get active assessment types*/
+    /**
+     * Create new assessment type
+     */
+    public int createAssessmentType(AssessmentType assessmentType) {
+        return assessmentDAO.createAssessmentType(assessmentType);
+    }
+
+    /**
+     * Toggle assessment type active status
+     */
+    public boolean toggleAssessmentTypeStatus(int typeId) {
+        return assessmentDAO.toggleAssessmentTypeStatus(typeId);
+    }
+
+    /**
+     * Update assessment type
+     */
+    public boolean updateAssessmentType(AssessmentType assessmentType) {
+        return assessmentDAO.updateAssessmentType(assessmentType);
+    }
+
+    /* get active assessment types */
     public List<AssessmentType> getActiveAssessmentTypes() {
         return assessmentDAO.findActiveTypes();
     }
 
-    /*get assessment type by ID*/
+    /* get assessment type by ID */
     public AssessmentType getAssessmentTypeById(int typeId) {
         return assessmentDAO.findTypeById(typeId);
     }
 
-    /*get assessment questions*/
+    /* get assessment questions */
     public List<AssessmentQuestion> getAssessmentQuestions(int assessmentTypeId) {
         return assessmentDAO.findQuestionsByTypeId(assessmentTypeId);
     }
 
-    /*get questions by category*/
+    /* get questions by category */
     public List<AssessmentQuestion> getQuestionsByCategory(int assessmentTypeId, String category) {
         return assessmentDAO.findQuestionsByCategory(assessmentTypeId, category);
     }
 
-    /*create assessment question*/
+    /* create assessment question */
     public int createQuestion(AssessmentQuestion question) {
         return assessmentDAO.createQuestion(question);
     }
 
-    /*update assessment question*/
+    /* update assessment question */
     public boolean updateQuestion(AssessmentQuestion question) {
         return assessmentDAO.updateQuestion(question);
     }
 
-    /*delete assessment question*/
+    /* delete assessment question */
     public boolean deleteQuestion(int questionId) {
         return assessmentDAO.deleteQuestion(questionId);
     }
 
-    /*get question by ID*/
+    /* get question by ID */
     public AssessmentQuestion getQuestionById(int questionId) {
         return assessmentDAO.findQuestionById(questionId);
     }
@@ -66,12 +87,12 @@ public class AssessmentService {
     /**
      * Process and save assessment results
      * For DASS-21 assessment
-    */
+     */
     public AssessmentResult processAssessment(int studentId, int assessmentTypeId, Map<String, String> answers) {
-        //get questions to determine categories
+        // get questions to determine categories
         List<AssessmentQuestion> questions = assessmentDAO.findQuestionsByTypeId(assessmentTypeId);
 
-        //calculate scores for each category
+        // calculate scores for each category
         int depressionScore = 0;
         int anxietyScore = 0;
         int stressScore = 0;
@@ -83,7 +104,7 @@ public class AssessmentService {
             if (answerValue != null) {
                 int score = Integer.parseInt(answerValue);
 
-                //categorize scores based on question category
+                // categorize scores based on question category
                 switch (question.getCategory().toUpperCase()) {
                     case "DEPRESSION":
                         depressionScore += score;
@@ -98,18 +119,18 @@ public class AssessmentService {
             }
         }
 
-        //multiply by 2 for DASS-21
+        // multiply by 2 for DASS-21
         depressionScore *= 2;
         anxietyScore *= 2;
         stressScore *= 2;
 
-        //determine overall severity (based on highest score)
+        // determine overall severity (based on highest score)
         AssessmentResult.Severity severity = determineSeverity(depressionScore, anxietyScore, stressScore);
 
-        //generate recommendations
+        // generate recommendations
         String recommendations = generateRecommendations(depressionScore, anxietyScore, stressScore, severity);
 
-        //create result object
+        // create result object
         AssessmentResult result = new AssessmentResult();
         result.setStudentId(studentId);
         result.setAssessmentTypeId(assessmentTypeId);
@@ -119,16 +140,16 @@ public class AssessmentService {
         result.setOverallSeverity(severity);
         result.setRecommendations(recommendations);
 
-        //save to database
+        // save to database
         int resultId = assessmentDAO.createResult(result);
         result.setResultId(resultId);
 
         return result;
     }
 
-    /*Determine severity based on scores*/
+    /* Determine severity based on scores */
     private AssessmentResult.Severity determineSeverity(int depressionScore, int anxietyScore, int stressScore) {
-        //get the highest score among all three
+        // get the highest score among all three
         int maxScore = Math.max(depressionScore, Math.max(anxietyScore, stressScore));
 
         // DASS-21 severity ranges
@@ -145,14 +166,14 @@ public class AssessmentService {
         }
     }
 
-    /*Generate recommendations based on scores*/
+    /* Generate recommendations based on scores */
     private String generateRecommendations(int depressionScore, int anxietyScore,
             int stressScore, AssessmentResult.Severity severity) {
         StringBuilder recommendations = new StringBuilder();
 
         recommendations.append("Based on your assessment results:\n\n");
 
-        //depression recommendations
+        // depression recommendations
         if (depressionScore > 9) {
             recommendations.append("Depression: Your score indicates ")
                     .append(getSeverityLevel(depressionScore, "depression"))
@@ -163,7 +184,7 @@ public class AssessmentService {
             recommendations.append("\n\n");
         }
 
-        //anxiety recommendations
+        // anxiety recommendations
         if (anxietyScore > 7) {
             recommendations.append("Anxiety: Your score indicates ")
                     .append(getSeverityLevel(anxietyScore, "anxiety"))
@@ -174,7 +195,7 @@ public class AssessmentService {
             recommendations.append("\n\n");
         }
 
-        //stress recommendations
+        // stress recommendations
         if (stressScore > 14) {
             recommendations.append("Stress: Your score indicates ")
                     .append(getSeverityLevel(stressScore, "stress"))
@@ -185,7 +206,7 @@ public class AssessmentService {
             recommendations.append("\n\n");
         }
 
-        //general recommendations
+        // general recommendations
         recommendations.append("General Recommendations:\n");
         recommendations.append("• Consider booking an appointment with our counselors\n");
         recommendations.append("• Explore our learning modules on mental health\n");
@@ -201,7 +222,7 @@ public class AssessmentService {
         return recommendations.toString();
     }
 
-    /*get severity level description*/
+    /* get severity level description */
     private String getSeverityLevel(int score, String type) {
         if (type.equals("depression")) {
             if (score <= 9)
@@ -239,47 +260,47 @@ public class AssessmentService {
         }
     }
 
-    /*get result by ID*/
+    /* get result by ID */
     public AssessmentResult getResultById(int resultId) {
         return assessmentDAO.findResultById(resultId);
     }
 
-    /*get student's assessment history*/
+    /* get student's assessment history */
     public List<AssessmentResult> getStudentAssessmentHistory(int studentId) {
         return assessmentDAO.findResultsByStudentId(studentId);
     }
 
-    /*get recent results for student*/
+    /* get recent results for student */
     public List<AssessmentResult> getRecentResults(int studentId, int limit) {
         return assessmentDAO.findRecentResultsByStudentId(studentId, limit);
     }
 
-    /*get all assessment results*/
+    /* get all assessment results */
     public List<AssessmentResult> getAllResults() {
         return assessmentDAO.findAllResults();
     }
 
-    /*get results by severity*/
+    /* get results by severity */
     public List<AssessmentResult> getResultsBySeverity(AssessmentResult.Severity severity) {
         return assessmentDAO.findResultsBySeverity(severity);
     }
 
-    /*count assessments completed by student*/
+    /* count assessments completed by student */
     public int countStudentAssessments(int studentId) {
         return assessmentDAO.countByStudentId(studentId);
     }
 
-    /*count all assessment results*/
+    /* count all assessment results */
     public int countAllResults() {
         return assessmentDAO.countAllResults();
     }
 
-    /*get latest result for student*/
+    /* get latest result for student */
     public AssessmentResult getLatestResult(int studentId, int assessmentTypeId) {
         return assessmentDAO.findLatestResult(studentId, assessmentTypeId);
     }
 
-    /*get assessment statistics*/
+    /* get assessment statistics */
     public AssessmentStatistics getStatistics() {
         AssessmentStatistics stats = new AssessmentStatistics();
 

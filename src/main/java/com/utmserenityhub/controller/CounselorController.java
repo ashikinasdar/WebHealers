@@ -27,7 +27,7 @@ public class CounselorController {
     @Autowired
     private AssessmentService assessmentService;
 
-    /*counselor dashboard*/
+    /* counselor dashboard */
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
         Integer counselorId = (Integer) session.getAttribute("counselorId");
@@ -63,7 +63,7 @@ public class CounselorController {
         return "counselor/dashboard";
     }
 
-    /*appointment management*/
+    /* appointment management */
     @GetMapping("/appointments")
     public String appointments(HttpSession session, Model model) {
         Integer counselorId = (Integer) session.getAttribute("counselorId");
@@ -78,7 +78,7 @@ public class CounselorController {
         return "counselor/appointments";
     }
 
-    /*view appointment details*/
+    /* view appointment details */
     @GetMapping("/appointment/{appointmentId}")
     public String viewAppointment(@PathVariable int appointmentId,
             HttpSession session, Model model) {
@@ -100,7 +100,7 @@ public class CounselorController {
         return "counselor/appointment-details";
     }
 
-    /*approve appointment*/
+    /* approve appointment */
     @PostMapping("/appointment/{appointmentId}/approve")
     public String approveAppointment(@PathVariable int appointmentId,
             HttpSession session,
@@ -129,7 +129,7 @@ public class CounselorController {
         return "redirect:/counselor/appointments";
     }
 
-    /*decline appointment*/
+    /* decline appointment */
     @PostMapping("/appointment/{appointmentId}/decline")
     public String declineAppointment(@PathVariable int appointmentId,
             HttpSession session,
@@ -158,7 +158,7 @@ public class CounselorController {
         return "redirect:/counselor/appointments";
     }
 
-    /*complete appointment*/
+    /* complete appointment */
     @PostMapping("/appointment/{appointmentId}/complete")
     public String completeAppointment(@PathVariable int appointmentId,
             @RequestParam String counselorNotes,
@@ -188,17 +188,20 @@ public class CounselorController {
         return "redirect:/counselor/appointments";
     }
 
-    /*student assessment result*/
+    /* View Assessment Management Page */
     @GetMapping("/assessments")
     public String viewAssessments(Model model) {
-    
+        // Get all assessment results for counselor to review
         List<AssessmentResult> results = assessmentService.getAllResults();
         model.addAttribute("results", results);
+
+        List<AssessmentType> assessmentTypes = assessmentService.getAllAssessmentTypes();
+        model.addAttribute("assessmentTypes", assessmentTypes);
 
         return "counselor/assessments";
     }
 
-    /*view student assessment result*/
+    /* view student assessment result */
     @GetMapping("/assessment/{resultId}")
     public String viewAssessmentResult(@PathVariable int resultId, Model model) {
         AssessmentResult result = assessmentService.getResultById(resultId);
@@ -212,7 +215,7 @@ public class CounselorController {
         return "counselor/assessment-detail";
     }
 
-    /*counselor profile*/
+    /* counselor profile */
     @GetMapping("/profile")
     public String profile(HttpSession session, Model model) {
         Integer userId = (Integer) session.getAttribute("userId");
@@ -230,7 +233,7 @@ public class CounselorController {
         return "counselor/profile";
     }
 
-    /*update counselor profile*/
+    /* update counselor profile */
     @PostMapping("/profile/update")
     public String updateProfile(@ModelAttribute User user,
             @ModelAttribute Counselor counselor,
@@ -258,7 +261,7 @@ public class CounselorController {
         return "redirect:/counselor/profile";
     }
 
-    /*change password*/
+    /* change password */
     @PostMapping("/profile/change-password")
     public String changePassword(@RequestParam String currentPassword,
             @RequestParam String newPassword,
@@ -286,7 +289,7 @@ public class CounselorController {
         return "redirect:/counselor/profile";
     }
 
-    /*counselor availability*/
+    /* counselor availability */
     @GetMapping("/availability")
     public String manageAvailability(HttpSession session, Model model) {
         Integer counselorId = (Integer) session.getAttribute("counselorId");
@@ -301,7 +304,7 @@ public class CounselorController {
         return "counselor/availability";
     }
 
-    /*update availability*/
+    /* update availability */
     @PostMapping("/availability/update")
     public String updateAvailability(@RequestParam String availableDays,
             HttpSession session,
@@ -319,7 +322,7 @@ public class CounselorController {
         return "redirect:/counselor/availability";
     }
 
-    /*view assessment questions by type*/
+    /* view assessment questions by type */
     @GetMapping("/assessment/{typeId}/questions")
     public String viewQuestions(@PathVariable int typeId, Model model) {
         AssessmentType assessmentType = assessmentService.getAssessmentTypeById(typeId);
@@ -336,7 +339,84 @@ public class CounselorController {
         return "counselor/assessment-questions";
     }
 
-    /*create assessment question*/
+    /**
+     * Create new assessment type
+     */
+    @PostMapping("/assessment/type/create")
+    public String createAssessmentType(@RequestParam String name,
+            @RequestParam String description,
+            @RequestParam String scoringMethod,
+            @RequestParam(defaultValue = "true") boolean isActive,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
+        Integer userId = (Integer) session.getAttribute("userId");
+
+        if (userId == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            AssessmentType assessmentType = new AssessmentType();
+            assessmentType.setName(name);
+            assessmentType.setDescription(description);
+            assessmentType.setScoringMethod(scoringMethod);
+            assessmentType.setActive(isActive);
+            assessmentType.setTotalQuestions(0); // Start with 0 questions
+
+            int typeId = assessmentService.createAssessmentType(assessmentType);
+
+            if (typeId > 0) {
+                userService.logActivity(userId, "ASSESSMENT_TYPE_CREATED",
+                        "Created assessment type: " + name);
+                redirectAttributes.addFlashAttribute("success",
+                        "Assessment type '" + name + "' created successfully! You can now add questions to it.");
+            } else {
+                redirectAttributes.addFlashAttribute("error",
+                        "Failed to create assessment type. Please try again.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error",
+                    "Error: " + e.getMessage());
+        }
+
+        return "redirect:/counselor/assessments";
+    }
+
+    /**
+     * Toggle assessment type active status
+     */
+    @PostMapping("/assessment/type/{typeId}/toggle")
+    public String toggleAssessmentType(@PathVariable int typeId,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
+        Integer userId = (Integer) session.getAttribute("userId");
+
+        if (userId == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            boolean success = assessmentService.toggleAssessmentTypeStatus(typeId);
+
+            if (success) {
+                userService.logActivity(userId, "ASSESSMENT_TYPE_TOGGLED",
+                        "Toggled status for assessment type ID: " + typeId);
+                redirectAttributes.addFlashAttribute("success",
+                        "Assessment type status updated successfully!");
+            } else {
+                redirectAttributes.addFlashAttribute("error",
+                        "Failed to update assessment type status.");
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error",
+                    "Error: " + e.getMessage());
+        }
+
+        return "redirect:/counselor/assessments";
+    }
+
+    /* create assessment question */
     @PostMapping("/assessment/question/create")
     public String createQuestion(@RequestParam int assessmentTypeId,
             @RequestParam String questionText,
@@ -373,7 +453,7 @@ public class CounselorController {
         return "redirect:/counselor/assessment/" + assessmentTypeId + "/questions";
     }
 
-    /*edit assessment question*/
+    /* edit assessment question */
     @PostMapping("/assessment/question/{questionId}/edit")
     public String editQuestion(@PathVariable int questionId,
             @RequestParam int assessmentTypeId,
@@ -412,7 +492,7 @@ public class CounselorController {
         return "redirect:/counselor/assessment/" + assessmentTypeId + "/questions";
     }
 
-    /*delete assessment question*/
+    /* delete assessment question */
     @PostMapping("/assessment/question/{questionId}/delete")
     public String deleteQuestion(@PathVariable int questionId,
             @RequestParam int assessmentTypeId,
