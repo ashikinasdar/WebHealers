@@ -119,7 +119,7 @@
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
+    <!-- side navigation bar -->
     <div class="sidebar">
         <div class="brand-section">
             <div class="brand-logo">
@@ -138,10 +138,16 @@
                 <i class="fas fa-clipboard-check"></i> Assessments
             </a>
             <a class="nav-link" href="${pageContext.request.contextPath}/student/appointments">
-                <i class="fas fa-calendar"></i> Appointments
+                <i class="fas fa-calendar"></i> Counseling
             </a>
             <a class="nav-link active" href="${pageContext.request.contextPath}/student/forum">
                 <i class="fas fa-comments"></i> Forum
+            </a>
+            <a class="nav-link" href="${pageContext.request.contextPath}/student/mood/checkin">
+                <i class="fas fa-smile"></i> Mood Tracker
+            </a>
+            <a class="nav-link" href="${pageContext.request.contextPath}/student/chatbot">
+                <i class="fas fa-user"></i> Chatbot
             </a>
             <a class="nav-link" href="${pageContext.request.contextPath}/student/profile">
                 <i class="fas fa-user"></i> Profile
