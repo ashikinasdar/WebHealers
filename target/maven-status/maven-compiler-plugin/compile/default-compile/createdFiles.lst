@@ -2,7 +2,6 @@ com\utmserenityhub\model\ModuleProgress$Status.class
 com\utmserenityhub\model\User$UserType.class
 com\utmserenityhub\model\AssessmentType.class
 com\utmserenityhub\model\Appointment.class
-com\utmserenityhub\controller\ChatbotController.class
 com\utmserenityhub\model\ModuleProgress.class
 com\utmserenityhub\model\User.class
 com\utmserenityhub\controller\AdminController.class
