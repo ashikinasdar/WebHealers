@@ -177,62 +177,44 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
     </style>
   </head>
   <body>
-    <!-- Sidebar -->
+    <!-- side navigation bar -->
     <div class="sidebar">
-      <div class="brand-section">
-        <div class="brand-logo">
-          <i class="fas fa-heart"></i>
+        <div class="brand-section">
+            <div class="brand-logo">
+                <i class="fas fa-heart"></i>
+            </div>
+            <p class="brand-text">SerenityHub</p>
         </div>
-        <p class="brand-text">SerenityHub</p>
-      </div>
-      <nav class="nav flex-column mt-4">
-        <a
-          class="nav-link"
-          href="${pageContext.request.contextPath}/student/dashboard"
-        >
-          <i class="fas fa-home"></i> Dashboard
-        </a>
-        <a
-          class="nav-link"
-          href="${pageContext.request.contextPath}/student/learning"
-        >
-          <i class="fas fa-book"></i> Learning
-        </a>
-        <a
-          class="nav-link"
-          href="${pageContext.request.contextPath}/student/assessments"
-        >
-          <i class="fas fa-clipboard-check"></i> Assessments
-        </a>
-        <a
-          class="nav-link"
-          href="${pageContext.request.contextPath}/student/appointments"
-        >
-          <i class="fas fa-calendar"></i> Appointments
-        </a>
-        <a
-          class="nav-link"
-          href="${pageContext.request.contextPath}/student/forum"
-        >
-          <i class="fas fa-comments"></i> Forum
-        </a>
-        <a
-          class="nav-link active"
-          href="${pageContext.request.contextPath}/student/mood/checkin"
-        >
-          <i class="fas fa-smile"></i> Mood Tracker
-        </a>
-        <a
-          class="nav-link"
-          href="${pageContext.request.contextPath}/student/profile"
-        >
-          <i class="fas fa-user"></i> Profile
-        </a>
-        <hr style="border-color: rgba(255, 255, 255, 0.1); margin: 20px 25px" />
-        <a class="nav-link" href="${pageContext.request.contextPath}/logout">
-          <i class="fas fa-sign-out-alt"></i> Logout
-        </a>
-      </nav>
+        <nav class="nav flex-column mt-4">
+            <a class="nav-link" href="${pageContext.request.contextPath}/student/dashboard">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a class="nav-link" href="${pageContext.request.contextPath}/student/learning">
+                <i class="fas fa-book"></i> Learning
+            </a>
+            <a class="nav-link" href="${pageContext.request.contextPath}/student/assessments">
+                <i class="fas fa-clipboard-check"></i> Assessments
+            </a>
+            <a class="nav-link" href="${pageContext.request.contextPath}/student/appointments">
+                <i class="fas fa-calendar"></i> Counseling
+            </a>
+            <a class="nav-link" href="${pageContext.request.contextPath}/student/forum">
+                <i class="fas fa-comments"></i> Forum
+            </a>
+            <a class="nav-link active" href="${pageContext.request.contextPath}/student/mood/checkin">
+                <i class="fas fa-smile"></i> Mood Tracker
+            </a>
+            <a class="nav-link" href="${pageContext.request.contextPath}/student/chatbot">
+                <i class="fas fa-user"></i> Chatbot
+            </a>
+            <a class="nav-link" href="${pageContext.request.contextPath}/student/profile">
+                <i class="fas fa-user"></i> Profile
+            </a>
+            <hr style="border-color: rgba(255,255,255,0.1); margin: 20px 25px;">
+            <a class="nav-link" href="${pageContext.request.contextPath}/logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </nav>
     </div>
 
     <!-- Main Content -->

@@ -150,7 +150,7 @@
             <p class="brand-text">SerenityHub</p>
           </div>
           <nav class="nav flex-column mt-4">
-            <a class="nav-link active" href="${pageContext.request.contextPath}/student/dashboard">
+            <a class="nav-link" href="${pageContext.request.contextPath}/student/dashboard">
               <i class="fas fa-home"></i> Dashboard
             </a>
             <a class="nav-link" href="${pageContext.request.contextPath}/student/learning">
@@ -159,7 +159,7 @@
             <a class="nav-link" href="${pageContext.request.contextPath}/student/assessments">
               <i class="fas fa-clipboard-check"></i> Assessments
             </a>
-            <a class="nav-link" href="${pageContext.request.contextPath}/student/appointments">
+            <a class="nav-link active" href="${pageContext.request.contextPath}/student/appointments">
               <i class="fas fa-calendar"></i> Counseling
             </a>
             <a class="nav-link" href="${pageContext.request.contextPath}/student/forum">

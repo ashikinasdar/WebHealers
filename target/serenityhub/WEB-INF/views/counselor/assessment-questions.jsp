@@ -217,11 +217,11 @@
                                                     data-bs-target="#editModal${question.assessmentQuestionId}">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
-                                                <!--
-                                        <button type="button" class="btn btn-sm btn-outline-danger" 
-                                                onclick="confirmDelete(${question.assessmentQuestionId})">
-                                            <i class="fas fa-trash"></i>
-                                        </button>-->
+                                    
+                                                <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                        onclick="confirmDelete(${question.assessmentQuestionId})">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
