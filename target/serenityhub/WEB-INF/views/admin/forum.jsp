@@ -224,10 +224,6 @@
                                         </span>
                                     </div>
                                     <div>
-                                        <a href="${pageContext.request.contextPath}/student/forum/thread/${thread.thread_id}" 
-                                           class="btn btn-sm btn-info me-2" target="_blank">
-                                            <i class="fas fa-eye me-1"></i>View
-                                        </a>
                                         <form action="${pageContext.request.contextPath}/admin/forum/thread/${thread.thread_id}/delete" 
                                               method="post" style="display: inline;">
                                             <button type="submit" class="btn btn-sm btn-danger"
