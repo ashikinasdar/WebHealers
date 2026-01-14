@@ -185,7 +185,7 @@
               <i class="fas fa-clock"></i> Manage Shift
             </a>
             <a class="nav-link active" href="${pageContext.request.contextPath}/counselor/assessments">
-              <i class="fas fa-clipboard-list"></i> Student Assessments
+              <i class="fas fa-clipboard-list"></i> Students Assessments
             </a>
             <a class="nav-link" href="${pageContext.request.contextPath}/counselor/profile">
               <i class="fas fa-user"></i> My Profile

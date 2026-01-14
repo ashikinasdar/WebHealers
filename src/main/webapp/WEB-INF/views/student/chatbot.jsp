@@ -39,6 +39,12 @@
                     padding: 20px;
                 }
 
+                .navbar {
+                    background: white;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    margin-bottom: 30px;
+                }
+
                 .chat-window {
                     height: 550px;
                     background: white;
@@ -80,6 +86,22 @@
                     display: flex;
                     gap: 10px;
                 }
+                .brand-section {
+                    padding: 30px 25px;
+                    text-align: center;
+                    border-bottom: 1px solid rgba(255,255,255,0.1);
+                }
+                .brand-logo {
+                    font-size: 32px;
+                    color: white;
+                    margin-bottom: 5px;
+                }
+                .brand-text {
+                    color: white;
+                    font-size: 18px;
+                    font-weight: 600;
+                    margin: 0;
+                }
             </style>
         </head>
 
@@ -87,6 +109,12 @@
 
             <!-- Sidebar -->
             <div class="sidebar">
+                <div class="brand-section">
+                    <div class="brand-logo">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <p class="brand-text">SerenityHub</p>
+                </div>
                 <nav class="nav flex-column mt-4">
                     <a class="nav-link " href="${pageContext.request.contextPath}/student/dashboard">
                         <i class="fas fa-home"></i> Dashboard
@@ -107,7 +135,7 @@
                         <i class="fas fa-smile"></i> Mood Tracker
                     </a>
                     <a class="nav-link active" href="${pageContext.request.contextPath}/student/chatbot">
-                        <i class="fas fa-user"></i> Chatbot
+                        <i class="fas fa-robot"></i> Chatbot
                     </a>
                     <a class="nav-link" href="${pageContext.request.contextPath}/student/profile">
                         <i class="fas fa-user"></i> Profile
@@ -121,8 +149,13 @@
 
             <!-- Main Content -->
             <div class="main-content">
-                <h4><i class="fas fa-robot me-2"></i> Mental Health Chatbot</h4>
-                <p class="text-muted">Talk to Serenity AI for support</p>
+
+                <nav class="navbar navbar-expand-lg navbar-light rounded">
+                    <div class="container-fluid">
+                        <h4><i class="fas fa-robot me-2"></i> Mental Health Chatbot</h4>
+                        <p class="text-muted">Talk to Serenity AI for support</p>
+                    </div>
+                </nav>
 
                 <div class="chat-window mt-3">
                     <div class="chat-messages" id="chatMessages">

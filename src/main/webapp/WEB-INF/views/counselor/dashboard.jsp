@@ -203,7 +203,7 @@
                     <nav class="navbar navbar-expand-lg navbar-light">
                         <div class="container-fluid">
                             <h4 class="mb-0">
-                                Counselor Dashboard
+                                <i class="fas fa-home me-2"></i>Counselor Dashboard
                                 <span class="counselor-badge">COUNSELOR</span>
                             </h4>
                             <span class="text-muted">Welcome back, ${fullName}</span>
