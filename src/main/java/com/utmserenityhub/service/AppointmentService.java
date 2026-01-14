@@ -13,147 +13,151 @@ import java.util.List;
 @Service
 @Transactional
 public class AppointmentService {
-    
+
     @Autowired
     private AppointmentDAO appointmentDAO;
-    
-    /*create a new appointment*/
+
+    /* create a new appointment */
     public boolean createAppointment(Appointment appointment) {
-        //validate appointment date is not in the past
+        // validate appointment date is not in the past
         Date today = new Date(System.currentTimeMillis());
         if (appointment.getAppointmentDate().before(today)) {
             return false;
         }
-        
+
         // check if time slot is available
         if (!appointmentDAO.isTimeSlotAvailable(
-                appointment.getCounselorId(), 
-                appointment.getAppointmentDate(), 
+                appointment.getCounselorId(),
+                appointment.getAppointmentDate(),
                 appointment.getAppointmentTime())) {
             return false;
         }
-        
+
         int result = appointmentDAO.create(appointment);
         return result > 0;
     }
-    
-    /*get appointment by ID*/
+
+    /* get appointment by ID */
     public Appointment getAppointmentById(int appointmentId) {
         return appointmentDAO.findById(appointmentId);
     }
-    
-    /*update appointment*/
+
+    /* update appointment */
     public boolean updateAppointment(Appointment appointment) {
         return appointmentDAO.update(appointment);
     }
-    
-    /*update appointment status*/
+
+    /* update appointment status */
     public boolean updateAppointmentStatus(int appointmentId, Appointment.Status status) {
         return appointmentDAO.updateStatus(appointmentId, status);
     }
-    
-    /*approve appointment*/
+
+    /* approve appointment */
     public boolean approveAppointment(int appointmentId) {
         return appointmentDAO.updateStatus(appointmentId, Appointment.Status.APPROVED);
     }
-    
-    /*decline appointment*/
+
+    /* decline appointment */
     public boolean declineAppointment(int appointmentId) {
         return appointmentDAO.updateStatus(appointmentId, Appointment.Status.DECLINED);
     }
-    
-    /*complete appointment*/
+
+    /* complete appointment */
     public boolean completeAppointment(int appointmentId, String counselorNotes) {
         boolean notesUpdated = appointmentDAO.updateCounselorNotes(appointmentId, counselorNotes);
         boolean statusUpdated = appointmentDAO.updateStatus(appointmentId, Appointment.Status.COMPLETED);
         return notesUpdated && statusUpdated;
     }
-    
-    /*cancel appointment*/
+
+    /* cancel appointment */
     public boolean cancelAppointment(int appointmentId) {
         return appointmentDAO.updateStatus(appointmentId, Appointment.Status.CANCELLED);
     }
-    
-    /*delete appointment*/
+
+    /* delete appointment */
     public boolean deleteAppointment(int appointmentId) {
         return appointmentDAO.delete(appointmentId);
     }
-    
-    /*get student's appointments*/
+
+    public boolean addMeetingLink(int appointmentId, String meetingLink) {
+        return appointmentDAO.updateMeetingLink(appointmentId, meetingLink);
+    }
+
+    /* get student's appointments */
     public List<Appointment> getStudentAppointments(int studentId) {
         return appointmentDAO.findByStudentId(studentId);
     }
-    
-    /*get counselor's appointments*/
+
+    /* get counselor's appointments */
     public List<Appointment> getCounselorAppointments(int counselorId) {
         return appointmentDAO.findByCounselorId(counselorId);
     }
-    
-    /*get pending appointments for counselor*/
+
+    /* get pending appointments for counselor */
     public List<Appointment> getPendingAppointments(int counselorId) {
         return appointmentDAO.findPendingByCounselorId(counselorId);
     }
-    
-    /*get upcoming appointments for student*/
+
+    /* get upcoming appointments for student */
     public List<Appointment> getUpcomingAppointments(int studentId, int limit) {
         return appointmentDAO.findUpcomingByStudentId(studentId, limit);
     }
-    
-    /*get appointments by status*/
+
+    /* get appointments by status */
     public List<Appointment> getAppointmentsByStatus(Appointment.Status status) {
         return appointmentDAO.findByStatus(status);
     }
-    
-    /*get all appointments*/
+
+    /* get all appointments */
     public List<Appointment> getAllAppointments() {
         return appointmentDAO.findAll();
     }
-    
-    /*count student's appointments*/
+
+    /* count student's appointments */
     public int countStudentAppointments(int studentId) {
         return appointmentDAO.countByStudentId(studentId);
     }
-    
-    /*count all appointments*/
+
+    /* count all appointments */
     public int countAllAppointments() {
         return appointmentDAO.countAll();
     }
-    
-    /*count appointments by status*/
+
+    /* count appointments by status */
     public int countAppointmentsByStatus(Appointment.Status status) {
         return appointmentDAO.countByStatus(status);
     }
 
-    /*check if time slot is available*/
+    /* check if time slot is available */
     public boolean isTimeSlotAvailable(int counselorId, Date date, Time time) {
         return appointmentDAO.isTimeSlotAvailable(counselorId, date, time);
     }
 
-    /*validate appointment data*/
+    /* validate appointment data */
     public boolean validateAppointment(Appointment appointment) {
         if (appointment == null) {
             return false;
         }
-        
-        //check required fields
+
+        // check required fields
         if (appointment.getStudentId() <= 0 || appointment.getCounselorId() <= 0) {
             return false;
         }
-        
+
         if (appointment.getAppointmentDate() == null || appointment.getAppointmentTime() == null) {
             return false;
         }
-        
+
         // Check date is not in the past
         Date today = new Date(System.currentTimeMillis());
         if (appointment.getAppointmentDate().before(today)) {
             return false;
         }
-        
+
         return true;
     }
 
-    /*get appointment statistics*/
+    /* get appointment statistics */
     public AppointmentStatistics getStatistics() {
         AppointmentStatistics stats = new AppointmentStatistics();
         stats.setTotalAppointments(appointmentDAO.countAll());
@@ -164,7 +168,7 @@ public class AppointmentService {
         stats.setCancelledCount(appointmentDAO.countByStatus(Appointment.Status.CANCELLED));
         return stats;
     }
-    
+
     // Inner class for statistics
     public static class AppointmentStatistics {
         private int totalAppointments;
@@ -173,54 +177,55 @@ public class AppointmentService {
         private int completedCount;
         private int declinedCount;
         private int cancelledCount;
-        
+
         // Getters and Setters
         public int getTotalAppointments() {
             return totalAppointments;
         }
-        
+
         public void setTotalAppointments(int totalAppointments) {
             this.totalAppointments = totalAppointments;
         }
-        
+
         public int getPendingCount() {
             return pendingCount;
         }
-        
+
         public void setPendingCount(int pendingCount) {
             this.pendingCount = pendingCount;
         }
-        
+
         public int getApprovedCount() {
             return approvedCount;
         }
-        
+
         public void setApprovedCount(int approvedCount) {
             this.approvedCount = approvedCount;
         }
-        
+
         public int getCompletedCount() {
             return completedCount;
         }
-        
+
         public void setCompletedCount(int completedCount) {
             this.completedCount = completedCount;
         }
-        
+
         public int getDeclinedCount() {
             return declinedCount;
         }
-        
+
         public void setDeclinedCount(int declinedCount) {
             this.declinedCount = declinedCount;
         }
-        
+
         public int getCancelledCount() {
             return cancelledCount;
         }
-        
+
         public void setCancelledCount(int cancelledCount) {
             this.cancelledCount = cancelledCount;
         }
+
     }
 }
