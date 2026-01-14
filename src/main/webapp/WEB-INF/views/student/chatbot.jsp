@@ -1,3 +1,6 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,7 +21,7 @@
             <p class="brand-text">SerenityHub</p>
         </div>
         <nav class="nav flex-column mt-4">
-            <a class="nav-link active" href="${pageContext.request.contextPath}/student/dashboard">
+            <a class="nav-link" href="${pageContext.request.contextPath}/student/dashboard">
                 <i class="fas fa-home"></i> Dashboard
             </a>
             <a class="nav-link" href="${pageContext.request.contextPath}/student/learning">
@@ -33,7 +36,7 @@
             <a class="nav-link" href="${pageContext.request.contextPath}/student/forum">
                 <i class="fas fa-comments"></i> Forum
             </a>
-            <a class="nav-link" href="${pageContext.request.contextPath}/student/chatbot">
+            <a class="nav-link active" href="${pageContext.request.contextPath}/student/chatbot">
                 <i class="fas fa-user"></i> Chatbot
             </a>
              <a class="nav-link" href="${pageContext.request.contextPath}/student/profile">
