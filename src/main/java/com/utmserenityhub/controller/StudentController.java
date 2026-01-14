@@ -273,6 +273,28 @@ public class StudentController {
         return "student/assessment-result-detail";
     }
 
+    /**
+     * Chatbot Support Page
+     */
+    @GetMapping("/chatbot")
+    public String chatbot(HttpSession session, Model model) {
+        Integer studentId = (Integer) session.getAttribute("studentId");
+        Integer userId = (Integer) session.getAttribute("userId");
+
+        if (studentId == null || userId == null) {
+            return "redirect:/login";
+        }
+
+        // Optional: Get student info to display in chatbot
+        Student student = studentService.getStudentByUserId(userId);
+        model.addAttribute("student", student);
+
+        // Optional: Log that student accessed chatbot
+        userService.logActivity(userId, "CHATBOT_ACCESS", "Accessed chatbot support");
+
+        return "student/chatbot";
+    }
+
     /* appointment page */
     @GetMapping("/appointments")
     public String appointments(HttpSession session, Model model) {
