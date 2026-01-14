@@ -4,26 +4,6 @@
       <!DOCTYPE html>
       <html lang="en">
 
-<<<<<<< HEAD
-    <!-- Main Content -->
-    <div class="main-content">
-      <!-- Top Navbar -->
-      <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container-fluid">
-          <h4 class="mb-0">
-            <i class="fas fa-clipboard-list me-2"></i>Assessment Management
-          </h4>
-          <button
-            type="button"
-            class="btn btn-success"
-            data-bs-toggle="modal"
-            data-bs-target="#createTypeModal"
-          >
-            <i class="fas fa-plus-circle me-2"></i>Create New Assessment Type
-          </button>
-        </div>
-      </nav>
-=======
       <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -35,7 +15,6 @@
             background: #f5f7fa;
             font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
           }
->>>>>>> a27bec3d26c03f979aaa317bfbfe41b7e88854e0
 
           .sidebar {
             min-height: 100vh;
@@ -578,72 +557,6 @@
                     take it.
                   </div>
                 </div>
-<<<<<<< HEAD
-              </c:when>
-              <c:otherwise>
-                <c:forEach items="${assessmentTypes}" var="type">
-                  <div class="col-md-6">
-                    <div class="assessment-card">
-                      <div
-                        class="d-flex justify-content-between align-items-start mb-3"
-                      >
-                        <div>
-                          <h5 class="mb-1">${type.name}</h5>
-                          <p class="text-muted mb-0">${type.description}</p>
-                        </div>
-                        <span
-                          class="badge ${type.active ? 'bg-success' : 'bg-secondary'}"
-                        >
-                          ${type.active ? 'Active' : 'Inactive'}
-                        </span>
-                      </div>
-
-                      <div class="row mb-3">
-                        <div class="col-md-6">
-                          <small class="text-muted"
-                            ><i class="fas fa-question-circle me-1"></i>Total
-                            Questions:</small
-                          >
-                          <strong class="ms-2">${type.totalQuestions}</strong>
-                        </div>
-                        <div class="col-md-6">
-                          <small class="text-muted"
-                            ><i class="fas fa-calculator me-1"></i
-                            >Scoring:</small
-                          >
-                          <strong class="ms-2">${type.scoringMethod}</strong>
-                        </div>
-                      </div>
-
-                      <button
-                        type="button"
-                        class="btn btn-primary btn-sm"
-                        onclick="window.location.href='${pageContext.request.contextPath}/counselor/assessment/${type.assessmentTypeId}/questions'"
-                      >
-                        <i class="fas fa-list me-1"></i>Manage Questions
-                        (${type.totalQuestions})
-                      </button>
-                      <form
-                        action="${pageContext.request.contextPath}/counselor/assessment/type/${type.assessmentTypeId}/toggle"
-                        method="post"
-                        style="display: inline"
-                      >
-                        <button
-                          type="submit"
-                          class="btn btn-sm ${type.active ? 'btn-outline-warning' : 'btn-outline-success'}"
-                        >
-                          <i
-                            class="fas ${type.active ? 'fa-eye-slash' : 'fa-eye'} me-1"
-                          ></i>
-                          ${type.active ? 'Deactivate' : 'Activate'}
-                        </button>
-                      </form>
-                    </div>
-                  </div>
-                </c:forEach>
-              </c:otherwise>
-            </c:choose>
-=======
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     Cancel
@@ -654,134 +567,9 @@
                 </div>
               </form>
             </div>
->>>>>>> a27bec3d26c03f979aaa317bfbfe41b7e88854e0
           </div>
         </div>
 
-<<<<<<< HEAD
-    <!-- Create Assessment Type Modal -->
-    <div class="modal fade" id="createTypeModal" tabindex="-1">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">
-              <i class="fas fa-plus-circle me-2"></i>Create New Assessment Type
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-            ></button>
-          </div>
-          <form
-            action="${pageContext.request.contextPath}/counselor/assessment/type/create"
-            method="post"
-          >
-            <div class="modal-body">
-              <div class="mb-3">
-                <label class="form-label"
-                  >Assessment Name <span class="text-danger">*</span></label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  name="name"
-                  placeholder="e.g., PHQ-9, GAD-7, DASS-21"
-                  required
-                />
-                <small class="text-muted"
-                  >Choose a clear, recognizable name for this assessment</small
-                >
-              </div>
-
-              <div class="mb-3">
-                <label class="form-label"
-                  >Description <span class="text-danger">*</span></label
-                >
-                <textarea
-                  class="form-control"
-                  name="description"
-                  rows="3"
-                  placeholder="Describe what this assessment measures..."
-                  required
-                ></textarea>
-                <small class="text-muted"
-                  >This will be shown to students when they select an
-                  assessment</small
-                >
-              </div>
-
-              <div class="mb-3">
-                <label class="form-label"
-                  >Scoring Method <span class="text-danger">*</span></label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  name="scoringMethod"
-                  placeholder="e.g., Sum scores, Sum and multiply by 2"
-                  required
-                />
-                <small class="text-muted"
-                  >Explain how the assessment is scored</small
-                >
-              </div>
-
-              <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  name="isActive"
-                  value="true"
-                  id="isActiveCheck"
-                  checked
-                />
-                <label class="form-check-label" for="isActiveCheck">
-                  Make this assessment active (students can take it immediately)
-                </label>
-              </div>
-
-              <div class="alert alert-info mt-3 mb-0">
-                <i class="fas fa-info-circle me-2"></i>
-                <strong>Next Steps:</strong> After creating this assessment
-                type, you'll need to add questions to it before students can
-                take it.
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Cancel
-              </button>
-              <button type="submit" class="btn btn-success">
-                <i class="fas fa-plus-circle me-1"></i>Create Assessment Type
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-      // Filter functionality
-      document.querySelectorAll(".filter-btn").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          // Update active button
-          document.querySelectorAll(".filter-btn").forEach(function (b) {
-            b.classList.remove("btn-primary");
-            b.classList.add(
-              "btn-outline-primary",
-              "btn-outline-success",
-              "btn-outline-warning",
-              "btn-outline-orange",
-              "btn-outline-danger",
-              "btn-outline-dark"
-            );
-=======
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
           // Filter functionality
@@ -822,7 +610,6 @@
                 }
               });
             });
->>>>>>> a27bec3d26c03f979aaa317bfbfe41b7e88854e0
           });
 
           // Auto-dismiss alerts
