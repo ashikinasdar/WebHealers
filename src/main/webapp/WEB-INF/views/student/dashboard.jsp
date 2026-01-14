@@ -135,7 +135,7 @@
                 <i class="fas fa-clipboard-check"></i> Assessments
             </a>
             <a class="nav-link" href="${pageContext.request.contextPath}/student/appointments">
-                <i class="fas fa-calendar"></i> Appointments
+                <i class="fas fa-calendar"></i> Counseling
             </a>
             <a class="nav-link" href="${pageContext.request.contextPath}/student/forum">
                 <i class="fas fa-comments"></i> Forum

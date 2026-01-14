@@ -76,16 +76,34 @@ public class StudentController {
     }
 
     /* learning module page */
+    // ===== UPDATED StudentController.java - learning method =====
+
+    /* learning module page */
     @GetMapping("/learning")
-    public String learningModules(HttpSession session, Model model) {
+    public String learningModules(HttpSession session,
+            @RequestParam(required = false) String category,
+            Model model) {
         Integer studentId = (Integer) session.getAttribute("studentId");
 
         if (studentId == null) {
             return "redirect:/login";
         }
 
-        List<Map<String, Object>> modulesWithProgress = moduleService.getModulesWithProgress(studentId);
-        model.addAttribute("modules", modulesWithProgress);
+        // Get all modules with progress
+        List<Map<String, Object>> allModules = moduleService.getModulesWithProgress(studentId);
+
+        // Filter by category if specified
+        List<Map<String, Object>> filteredModules;
+        if (category != null && !category.equals("all")) {
+            filteredModules = allModules.stream()
+                    .filter(m -> category.equals(m.get("category")))
+                    .collect(java.util.stream.Collectors.toList());
+        } else {
+            filteredModules = allModules;
+        }
+
+        model.addAttribute("modules", filteredModules);
+        model.addAttribute("selectedCategory", category != null ? category : "all");
 
         return "student/learning";
     }
@@ -274,54 +292,54 @@ public class StudentController {
     }
 
     /**
- * Chatbot Support Page - FIXED VERSION
- */
-@GetMapping("/chatbot")
-public String chatbot(HttpSession session, Model model) {
-    // DEBUG: Print what's in the session
-    System.out.println("=== Chatbot Endpoint Called ===");
-    System.out.println("Session ID: " + session.getId());
-    
-    // Get session attributes
-    Integer studentId = (Integer) session.getAttribute("studentId");
-    Integer userId = (Integer) session.getAttribute("userId");
-    String fullName = (String) session.getAttribute("fullName");
-    
-    System.out.println("studentId from session: " + studentId);
-    System.out.println("userId from session: " + userId);
-    System.out.println("fullName from session: " + fullName);
-    
-    // Check authentication - match the pattern used in dashboard() method
-    if (studentId == null || userId == null) {
-        System.out.println("Missing session attributes - redirecting to login");
-        return "redirect:/login";
-    }
-    
-    try {
-        // Get student info
-        Student student = studentService.getStudentByUserId(userId);
-        
-        if (student == null) {
-            System.out.println("Student not found for userId: " + userId);
+     * Chatbot Support Page - FIXED VERSION
+     */
+    @GetMapping("/chatbot")
+    public String chatbot(HttpSession session, Model model) {
+        // DEBUG: Print what's in the session
+        System.out.println("=== Chatbot Endpoint Called ===");
+        System.out.println("Session ID: " + session.getId());
+
+        // Get session attributes
+        Integer studentId = (Integer) session.getAttribute("studentId");
+        Integer userId = (Integer) session.getAttribute("userId");
+        String fullName = (String) session.getAttribute("fullName");
+
+        System.out.println("studentId from session: " + studentId);
+        System.out.println("userId from session: " + userId);
+        System.out.println("fullName from session: " + fullName);
+
+        // Check authentication - match the pattern used in dashboard() method
+        if (studentId == null || userId == null) {
+            System.out.println("Missing session attributes - redirecting to login");
             return "redirect:/login";
         }
-        
-        model.addAttribute("student", student);
-        
-        // Log activity
-        userService.logActivity(userId, "CHATBOT_ACCESS", "Accessed chatbot support");
-        
-        System.out.println("Successfully loaded chatbot page for student: " + student.getFullName());
-        System.out.println("Returning view: student/chatbot");
-        
-        return "student/chatbot";
-        
-    } catch (Exception e) {
-        System.err.println("ERROR in chatbot method: " + e.getMessage());
-        e.printStackTrace();
-        return "redirect:/student/dashboard";
+
+        try {
+            // Get student info
+            Student student = studentService.getStudentByUserId(userId);
+
+            if (student == null) {
+                System.out.println("Student not found for userId: " + userId);
+                return "redirect:/login";
+            }
+
+            model.addAttribute("student", student);
+
+            // Log activity
+            userService.logActivity(userId, "CHATBOT_ACCESS", "Accessed chatbot support");
+
+            System.out.println("Successfully loaded chatbot page for student: " + student.getFullName());
+            System.out.println("Returning view: student/chatbot");
+
+            return "student/chatbot";
+
+        } catch (Exception e) {
+            System.err.println("ERROR in chatbot method: " + e.getMessage());
+            e.printStackTrace();
+            return "redirect:/student/dashboard";
+        }
     }
-}
 
     /* appointment page */
     @GetMapping("/appointments")
