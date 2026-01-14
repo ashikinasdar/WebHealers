@@ -140,6 +140,9 @@
             <a class="nav-link" href="${pageContext.request.contextPath}/student/forum">
                 <i class="fas fa-comments"></i> Forum
             </a>
+            <a class="nav-link" href="${pageContext.request.contextPath}/student/mood">
+                <i class="fas fa-smile"></i> Mood Tracker
+            </a>
             <a class="nav-link" href="${pageContext.request.contextPath}/student/chatbot">
                 <i class="fas fa-user"></i> Chatbot
             </a>
