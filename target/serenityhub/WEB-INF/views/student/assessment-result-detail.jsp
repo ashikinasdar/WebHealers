@@ -188,7 +188,7 @@
                             <i class="fas fa-smile"></i> Mood Tracker
                         </a>
                         <a class="nav-link" href="${pageContext.request.contextPath}/student/chatbot">
-                            <i class="fas fa-user"></i> Chatbot
+                            <i class="fas fa-robot"></i> Chatbot
                         </a>
                         <a class="nav-link" href="${pageContext.request.contextPath}/student/profile">
                             <i class="fas fa-user"></i> Profile
