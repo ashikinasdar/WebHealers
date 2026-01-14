@@ -188,6 +188,36 @@ public class CounselorController {
         return "redirect:/counselor/appointments";
     }
 
+    /* add meeting link to appointment */
+    @PostMapping("/appointment/{appointmentId}/add-link")
+    public String addMeetingLink(@PathVariable int appointmentId,
+            @RequestParam String meetingLink,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
+        Integer counselorId = (Integer) session.getAttribute("counselorId");
+        Integer userId = (Integer) session.getAttribute("userId");
+
+        if (counselorId == null) {
+            return "redirect:/login";
+        }
+
+        Appointment appointment = appointmentService.getAppointmentById(appointmentId);
+
+        if (appointment != null && appointment.getCounselorId() == counselorId) {
+            boolean success = appointmentService.addMeetingLink(appointmentId, meetingLink);
+
+            if (success) {
+                userService.logActivity(userId, "MEETING_LINK_ADDED",
+                        "Added meeting link to appointment #" + appointmentId);
+                redirectAttributes.addFlashAttribute("success", "Meeting link added successfully");
+            } else {
+                redirectAttributes.addFlashAttribute("error", "Failed to add meeting link");
+            }
+        }
+
+        return "redirect:/counselor/appointments";
+    }
+
     /* View Assessment Management Page */
     @GetMapping("/assessments")
     public String viewAssessments(Model model) {
@@ -320,6 +350,63 @@ public class CounselorController {
 
         redirectAttributes.addFlashAttribute("success", "Availability updated successfully");
         return "redirect:/counselor/availability";
+    }
+
+    /* manage counselling shift */
+    @GetMapping("/manage-shift")
+    public String manageShift(HttpSession session, Model model) {
+        Integer counselorId = (Integer) session.getAttribute("counselorId");
+        Integer userId = (Integer) session.getAttribute("userId");
+
+        if (counselorId == null) {
+            return "redirect:/login";
+        }
+
+        Counselor counselor = counselorService.getCounselorByUserId(userId);
+        model.addAttribute("counselor", counselor);
+
+        return "counselor/manage-shift";
+    }
+
+    /* update shift availability and link */
+    @PostMapping("/shift/update")
+    public String updateShift(@RequestParam(required = false) Boolean isAvailable,
+            @RequestParam(required = false) String shiftMeetingLink,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
+        Integer counselorId = (Integer) session.getAttribute("counselorId");
+        Integer userId = (Integer) session.getAttribute("userId");
+
+        if (counselorId == null) {
+            return "redirect:/login";
+        }
+
+        boolean available = (isAvailable != null && isAvailable);
+        String link = (shiftMeetingLink != null && !shiftMeetingLink.trim().isEmpty()) ? shiftMeetingLink : null;
+
+        // If turning on availability, require meeting link
+        if (available && (link == null || link.trim().isEmpty())) {
+            redirectAttributes.addFlashAttribute("error", "Meeting link is required when setting availability to ON");
+            return "redirect:/counselor/manage-shift";
+        }
+
+        // If turning off availability, clear the meeting link
+        if (!available) {
+            link = null;
+        }
+
+        boolean success = counselorService.updateAvailability(counselorId, available, link);
+
+        if (success) {
+            userService.logActivity(userId, "SHIFT_UPDATED",
+                    "Updated shift availability to: " + (available ? "Available" : "Unavailable"));
+            redirectAttributes.addFlashAttribute("success",
+                    "Shift status updated to " + (available ? "Available" : "Unavailable"));
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Failed to update shift status");
+        }
+
+        return "redirect:/counselor/manage-shift";
     }
 
     /* view assessment questions by type */

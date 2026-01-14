@@ -14,10 +14,10 @@ import java.util.List;
 
 @Repository
 public class CounselorDAO {
-    
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
-    
+
     // RowMapper for Counselor with User info
     private final RowMapper<Counselor> counselorRowMapper = (rs, rowNum) -> {
         Counselor counselor = new Counselor();
@@ -28,7 +28,9 @@ public class CounselorDAO {
         counselor.setBio(rs.getString("bio"));
         counselor.setAvailableDays(rs.getString("available_days"));
         counselor.setProfilePicture(rs.getString("profile_picture"));
-        
+        counselor.setAvailable(rs.getBoolean("is_available"));
+        counselor.setShiftMeetingLink(rs.getString("shift_meeting_link"));
+
         // user information (if joined)
         try {
             counselor.setFullName(rs.getString("full_name"));
@@ -37,17 +39,17 @@ public class CounselorDAO {
         } catch (Exception e) {
             // columns may not exist
         }
-        
+
         return counselor;
     };
-    
-    /*create new counselor profile*/
+
+    /* create new counselor profile */
     public int create(Counselor counselor) {
         String sql = "INSERT INTO counselors (user_id, specialization, qualifications, bio, available_days) " +
-                    "VALUES (?, ?, ?, ?, ?)";
-        
+                "VALUES (?, ?, ?, ?, ?)";
+
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        
+
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setInt(1, counselor.getUserId());
@@ -57,15 +59,15 @@ public class CounselorDAO {
             ps.setString(5, counselor.getAvailableDays());
             return ps;
         }, keyHolder);
-        
+
         return keyHolder.getKey().intValue();
     }
 
-    /*find counselor by ID*/
+    /* find counselor by ID */
     public Counselor findById(int counselorId) {
         String sql = "SELECT c.*, u.full_name, u.email, u.phone FROM counselors c " +
-                    "INNER JOIN users u ON c.user_id = u.user_id " +
-                    "WHERE c.counselor_id = ?";
+                "INNER JOIN users u ON c.user_id = u.user_id " +
+                "WHERE c.counselor_id = ?";
         try {
             return jdbcTemplate.queryForObject(sql, counselorRowMapper, counselorId);
         } catch (Exception e) {
@@ -73,11 +75,11 @@ public class CounselorDAO {
         }
     }
 
-    /*find counselor by user ID*/
+    /* find counselor by user ID */
     public Counselor findByUserId(int userId) {
         String sql = "SELECT c.*, u.full_name, u.email, u.phone FROM counselors c " +
-                    "INNER JOIN users u ON c.user_id = u.user_id " +
-                    "WHERE c.user_id = ?";
+                "INNER JOIN users u ON c.user_id = u.user_id " +
+                "WHERE c.user_id = ?";
         try {
             return jdbcTemplate.queryForObject(sql, counselorRowMapper, userId);
         } catch (Exception e) {
@@ -85,84 +87,90 @@ public class CounselorDAO {
         }
     }
 
-    /*update counselor profile*/
+    /* update counselor profile */
     public boolean update(Counselor counselor) {
         String sql = "UPDATE counselors SET specialization = ?, qualifications = ?, " +
-                    "bio = ?, available_days = ?, profile_picture = ? " +
-                    "WHERE counselor_id = ?";
-        int rows = jdbcTemplate.update(sql, 
-            counselor.getSpecialization(),
-            counselor.getQualifications(),
-            counselor.getBio(),
-            counselor.getAvailableDays(),
-            counselor.getProfilePicture(),
-            counselor.getCounselorId()
-        );
+                "bio = ?, available_days = ?, profile_picture = ? " +
+                "WHERE counselor_id = ?";
+        int rows = jdbcTemplate.update(sql,
+                counselor.getSpecialization(),
+                counselor.getQualifications(),
+                counselor.getBio(),
+                counselor.getAvailableDays(),
+                counselor.getProfilePicture(),
+                counselor.getCounselorId());
         return rows > 0;
     }
 
-    /*update counselor by user ID*/
+    /* update counselor by user ID */
     public boolean updateByUserId(Counselor counselor) {
         String sql = "UPDATE counselors SET specialization = ?, qualifications = ?, " +
-                    "bio = ?, available_days = ? " +
-                    "WHERE user_id = ?";
-        int rows = jdbcTemplate.update(sql, 
-            counselor.getSpecialization(),
-            counselor.getQualifications(),
-            counselor.getBio(),
-            counselor.getAvailableDays(),
-            counselor.getUserId()
-        );
+                "bio = ?, available_days = ? " +
+                "WHERE user_id = ?";
+        int rows = jdbcTemplate.update(sql,
+                counselor.getSpecialization(),
+                counselor.getQualifications(),
+                counselor.getBio(),
+                counselor.getAvailableDays(),
+                counselor.getUserId());
         return rows > 0;
     }
 
-    /*delete counselor profile*/
+    /* update counselor availability and shift link */
+    public boolean updateAvailability(int counselorId, boolean isAvailable, String shiftMeetingLink) {
+        String sql = "UPDATE counselors SET is_available = ?, shift_meeting_link = ? " +
+                "WHERE counselor_id = ?";
+        int rows = jdbcTemplate.update(sql, isAvailable, shiftMeetingLink, counselorId);
+        return rows > 0;
+    }
+
+    /* delete counselor profile */
     public boolean delete(int counselorId) {
         String sql = "DELETE FROM counselors WHERE counselor_id = ?";
         int rows = jdbcTemplate.update(sql, counselorId);
         return rows > 0;
     }
 
-    /*get all counselors*/
+    /* get all counselors */
     public List<Counselor> findAll() {
         String sql = "SELECT c.*, u.full_name, u.email, u.phone FROM counselors c " +
-                    "INNER JOIN users u ON c.user_id = u.user_id " +
-                    "WHERE u.is_active = TRUE " +
-                    "ORDER BY u.full_name";
+                "INNER JOIN users u ON c.user_id = u.user_id " +
+                "WHERE u.is_active = TRUE " +
+                "ORDER BY u.full_name";
         return jdbcTemplate.query(sql, counselorRowMapper);
     }
 
-    /*get counselors by specialization*/
+    /* get counselors by specialization */
     public List<Counselor> findBySpecialization(String specialization) {
         String sql = "SELECT c.*, u.full_name, u.email, u.phone FROM counselors c " +
-                    "INNER JOIN users u ON c.user_id = u.user_id " +
-                    "WHERE c.specialization = ? AND u.is_active = TRUE " +
-                    "ORDER BY u.full_name";
+                "INNER JOIN users u ON c.user_id = u.user_id " +
+                "WHERE c.specialization = ? AND u.is_active = TRUE " +
+                "ORDER BY u.full_name";
         return jdbcTemplate.query(sql, counselorRowMapper, specialization);
     }
 
-    /*count all counselors*/
+    /* count all counselors */
     public int countAll() {
         String sql = "SELECT COUNT(*) FROM counselors";
         return jdbcTemplate.queryForObject(sql, Integer.class);
     }
 
-    /*get available counselors (active users)*/
+    /* get available counselors (active users) */
     public List<Counselor> findAvailable() {
         String sql = "SELECT c.*, u.full_name, u.email, u.phone FROM counselors c " +
-                    "INNER JOIN users u ON c.user_id = u.user_id " +
-                    "WHERE u.is_active = TRUE " +
-                    "ORDER BY u.full_name";
+                "INNER JOIN users u ON c.user_id = u.user_id " +
+                "WHERE u.is_active = TRUE " +
+                "ORDER BY u.full_name";
         return jdbcTemplate.query(sql, counselorRowMapper);
     }
 
-    /*search counselors*/
+    /* search counselors */
     public List<Counselor> search(String keyword) {
         String sql = "SELECT c.*, u.full_name, u.email, u.phone FROM counselors c " +
-                    "INNER JOIN users u ON c.user_id = u.user_id " +
-                    "WHERE (u.full_name LIKE ? OR c.specialization LIKE ?) " +
-                    "AND u.is_active = TRUE " +
-                    "ORDER BY u.full_name";
+                "INNER JOIN users u ON c.user_id = u.user_id " +
+                "WHERE (u.full_name LIKE ? OR c.specialization LIKE ?) " +
+                "AND u.is_active = TRUE " +
+                "ORDER BY u.full_name";
         String searchPattern = "%" + keyword + "%";
         return jdbcTemplate.query(sql, counselorRowMapper, searchPattern, searchPattern);
     }

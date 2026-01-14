@@ -21,42 +21,42 @@ public class CounselorService {
     @Autowired
     private UserDAO userDAO;
 
-    /*create counselor profile*/
+    /* create counselor profile */
     public int createCounselor(Counselor counselor) {
         return counselorDAO.create(counselor);
     }
 
-    /*get counselor by ID*/
+    /* get counselor by ID */
     public Counselor getCounselorById(int counselorId) {
         return counselorDAO.findById(counselorId);
     }
 
-    /*get counselor by user ID*/
+    /* get counselor by user ID */
     public Counselor getCounselorByUserId(int userId) {
         return counselorDAO.findByUserId(userId);
     }
 
-    /*get all counselors*/
+    /* get all counselors */
     public List<Counselor> getAllCounselors() {
         return counselorDAO.findAll();
     }
 
-    /*get counselors by specialization*/
+    /* get counselors by specialization */
     public List<Counselor> getCounselorsBySpecialization(String specialization) {
         return counselorDAO.findBySpecialization(specialization);
     }
 
-    /*get available counselors*/
+    /* get available counselors */
     public List<Counselor> getAvailableCounselors() {
         return counselorDAO.findAvailable();
     }
 
-    /*update counselor profile (by user ID)*/
+    /* update counselor profile (by user ID) */
     public boolean updateCounselor(Counselor counselor) {
         return counselorDAO.updateByUserId(counselor);
     }
 
-    /*update profile picture*/
+    /* update profile picture */
     public boolean updateProfilePicture(int counselorId, String picturePath) {
         Counselor counselor = counselorDAO.findById(counselorId);
         if (counselor == null) {
@@ -67,7 +67,7 @@ public class CounselorService {
         return counselorDAO.update(counselor);
     }
 
-    /*update availability*/
+    /* update availability */
     public boolean updateAvailability(int counselorId, String availableDays) {
         Counselor counselor = counselorDAO.findById(counselorId);
         if (counselor == null) {
@@ -78,22 +78,26 @@ public class CounselorService {
         return counselorDAO.update(counselor);
     }
 
-    /*delete counselor*/
+    public boolean updateAvailability(int counselorId, boolean isAvailable, String shiftMeetingLink) {
+        return counselorDAO.updateAvailability(counselorId, isAvailable, shiftMeetingLink);
+    }
+
+    /* delete counselor */
     public boolean deleteCounselor(int counselorId) {
         return counselorDAO.delete(counselorId);
     }
 
-    /*search counselors*/
+    /* search counselors */
     public List<Counselor> searchCounselors(String keyword) {
         return counselorDAO.search(keyword);
     }
 
-    /*get total counselor count*/
+    /* get total counselor count */
     public int getTotalCounselorCount() {
         return counselorDAO.countAll();
     }
 
-    /*change password*/
+    /* change password */
     public boolean changePassword(int userId, String currentPassword, String newPassword) {
         User user = userDAO.findById(userId);
 
@@ -101,18 +105,18 @@ public class CounselorService {
             return false;
         }
 
-        //verify current password
+        // verify current password
         if (!BCrypt.checkpw(currentPassword, user.getPasswordHash())) {
             return false;
         }
 
-        //hash new password
+        // hash new password
         String newPasswordHash = BCrypt.hashpw(newPassword, BCrypt.gensalt(10));
 
         return userDAO.updatePassword(userId, newPasswordHash);
     }
 
-    /*validate counselor data*/
+    /* validate counselor data */
     public boolean validateCounselorData(Counselor counselor) {
         if (counselor == null) {
             return false;

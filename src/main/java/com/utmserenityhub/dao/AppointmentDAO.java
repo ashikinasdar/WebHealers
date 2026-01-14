@@ -26,6 +26,7 @@ public class AppointmentDAO {
         appointment.setCounselorId(rs.getInt("counselor_id"));
         appointment.setAppointmentDate(rs.getDate("appointment_date"));
         appointment.setAppointmentTime(rs.getTime("appointment_time"));
+        appointment.setMeetingLink(rs.getString("meeting_link"));
         appointment.setSessionType(Appointment.SessionType.valueOf(rs.getString("session_type")));
         appointment.setStatus(Appointment.Status.valueOf(rs.getString("status")));
         appointment.setReason(rs.getString("reason"));
@@ -46,7 +47,7 @@ public class AppointmentDAO {
         return appointment;
     };
 
-    /*create new appointment*/
+    /* create new appointment */
     public int create(Appointment appointment) {
         String sql = "INSERT INTO appointments (student_id, counselor_id, appointment_date, " +
                 "appointment_time, session_type, status, reason, notes) " +
@@ -70,7 +71,15 @@ public class AppointmentDAO {
         return keyHolder.getKey().intValue();
     }
 
-    /*find appointment by id*/
+    /* update meeting link */
+    public boolean updateMeetingLink(int appointmentId, String meetingLink) {
+        String sql = "UPDATE appointments SET meeting_link = ?, updated_at = CURRENT_TIMESTAMP " +
+                "WHERE appointment_id = ?";
+        int rows = jdbcTemplate.update(sql, meetingLink, appointmentId);
+        return rows > 0;
+    }
+
+    /* find appointment by id */
     public Appointment findById(int appointmentId) {
         String sql = "SELECT a.*, " +
                 "u1.full_name as student_name, u1.email as student_email, " +
@@ -88,7 +97,7 @@ public class AppointmentDAO {
         }
     }
 
-    /*update appointment*/
+    /* update appointment */
     public boolean update(Appointment appointment) {
         String sql = "UPDATE appointments SET counselor_id = ?, appointment_date = ?, " +
                 "appointment_time = ?, session_type = ?, reason = ?, notes = ? " +
@@ -104,7 +113,7 @@ public class AppointmentDAO {
         return rows > 0;
     }
 
-    /*update appointment status*/
+    /* update appointment status */
     public boolean updateStatus(int appointmentId, Appointment.Status status) {
         String sql = "UPDATE appointments SET status = ?, updated_at = CURRENT_TIMESTAMP " +
                 "WHERE appointment_id = ?";
@@ -112,7 +121,7 @@ public class AppointmentDAO {
         return rows > 0;
     }
 
-    /*update counselor notes*/
+    /* update counselor notes */
     public boolean updateCounselorNotes(int appointmentId, String notes) {
         String sql = "UPDATE appointments SET counselor_notes = ?, updated_at = CURRENT_TIMESTAMP " +
                 "WHERE appointment_id = ?";
@@ -120,14 +129,14 @@ public class AppointmentDAO {
         return rows > 0;
     }
 
-    /*delete appointments*/
+    /* delete appointments */
     public boolean delete(int appointmentId) {
         String sql = "DELETE FROM appointments WHERE appointment_id = ?";
         int rows = jdbcTemplate.update(sql, appointmentId);
         return rows > 0;
     }
 
-    /*get student's appointments*/
+    /* get student's appointments */
     public List<Appointment> findByStudentId(int studentId) {
         String sql = "SELECT a.*, " +
                 "u1.full_name as student_name, u1.email as student_email, " +
@@ -142,7 +151,7 @@ public class AppointmentDAO {
         return jdbcTemplate.query(sql, appointmentRowMapper, studentId);
     }
 
-    /*get counselor's appointments*/
+    /* get counselor's appointments */
     public List<Appointment> findByCounselorId(int counselorId) {
         String sql = "SELECT a.*, " +
                 "u1.full_name as student_name, u1.email as student_email, " +
@@ -157,7 +166,7 @@ public class AppointmentDAO {
         return jdbcTemplate.query(sql, appointmentRowMapper, counselorId);
     }
 
-    /*get appointments by status*/
+    /* get appointments by status */
     public List<Appointment> findByStatus(Appointment.Status status) {
         String sql = "SELECT a.*, " +
                 "u1.full_name as student_name, u1.email as student_email, " +
@@ -172,7 +181,7 @@ public class AppointmentDAO {
         return jdbcTemplate.query(sql, appointmentRowMapper, status.toString());
     }
 
-    /*get pending appointments for counselor*/
+    /* get pending appointments for counselor */
     public List<Appointment> findPendingByCounselorId(int counselorId) {
         String sql = "SELECT a.*, " +
                 "u1.full_name as student_name, u1.email as student_email, " +
@@ -187,7 +196,7 @@ public class AppointmentDAO {
         return jdbcTemplate.query(sql, appointmentRowMapper, counselorId);
     }
 
-    /*get upcoming appointments for student*/
+    /* get upcoming appointments for student */
     public List<Appointment> findUpcomingByStudentId(int studentId, int limit) {
         String sql = "SELECT a.*, " +
                 "u1.full_name as student_name, u1.email as student_email, " +
@@ -205,7 +214,7 @@ public class AppointmentDAO {
         return jdbcTemplate.query(sql, appointmentRowMapper, studentId, limit);
     }
 
-    /*get all appointments*/
+    /* get all appointments */
     public List<Appointment> findAll() {
         String sql = "SELECT a.*, " +
                 "u1.full_name as student_name, u1.email as student_email, " +
@@ -219,25 +228,25 @@ public class AppointmentDAO {
         return jdbcTemplate.query(sql, appointmentRowMapper);
     }
 
-    /*count appointments by student*/
+    /* count appointments by student */
     public int countByStudentId(int studentId) {
         String sql = "SELECT COUNT(*) FROM appointments WHERE student_id = ?";
         return jdbcTemplate.queryForObject(sql, Integer.class, studentId);
     }
 
-    /*count all appointments*/
+    /* count all appointments */
     public int countAll() {
         String sql = "SELECT COUNT(*) FROM appointments";
         return jdbcTemplate.queryForObject(sql, Integer.class);
     }
 
-    /*count appointments by status*/
+    /* count appointments by status */
     public int countByStatus(Appointment.Status status) {
         String sql = "SELECT COUNT(*) FROM appointments WHERE status = ?";
         return jdbcTemplate.queryForObject(sql, Integer.class, status.toString());
     }
 
-    /*check if time slot is available for counselor*/
+    /* check if time slot is available for counselor */
     public boolean isTimeSlotAvailable(int counselorId, Date date, java.sql.Time time) {
         String sql = "SELECT COUNT(*) FROM appointments " +
                 "WHERE counselor_id = ? AND appointment_date = ? AND appointment_time = ? " +
