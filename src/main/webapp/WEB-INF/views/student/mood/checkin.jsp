@@ -71,6 +71,7 @@
             font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 10px;
+            color: #667eea;
         }
         .streak-badge {
             background: rgba(255,255,255,0.2);
@@ -80,29 +81,6 @@
             color: #667eea;
             font-weight: 600;
             backdrop-filter: blur(10px);
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            text-align: center;
-            height: 100%;
-        }
-        .stat-icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-        }
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #2d3748;
-            margin-bottom: 5px;
-        }
-        .stat-label {
-            color: #718096;
-            font-size: 0.9rem;
         }
         .checkin-card {
             background: white;
@@ -184,30 +162,18 @@
         .mood-display-icon {
             font-size: 3rem;
         }
-        .quick-links {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .quick-link {
-            flex: 1;
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            text-decoration: none;
-            color: #2d3748;
-            text-align: center;
-            transition: all 0.3s;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .quick-link:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-            color: #667eea;
-        }
+        .stats-card{
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        text-align: center;
+      }
 
-        .quick-link i {
-            font-size: 2rem;
+      .stats-card h2{
+            text-align: center;
+            color: #667eea;
             margin-bottom: 10px;
       }
     </style>
@@ -262,53 +228,16 @@
         </div>
         </nav>
 
-        <!-- Stats Grid -->
-        <div class="row g-3 mb-4">
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon">📊</div>
-                    <div class="stat-value">${totalCheckins}</div>
-                    <div class="stat-label">Total Check-ins</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon">⭐</div>
-                    <div class="stat-value">${averageMood}</div>
-                    <div class="stat-label">Average Mood</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon">🔥</div>
-                    <div class="stat-value">${streak}</div>
-                    <div class="stat-label">Day Streak</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <c:choose>
-                            <c:when test="${mostCommonMood == 5}">😄</c:when>
-                            <c:when test="${mostCommonMood == 4}">😊</c:when>
-                            <c:when test="${mostCommonMood == 3}">😐</c:when>
-                            <c:when test="${mostCommonMood == 2}">😟</c:when>
-                            <c:when test="${mostCommonMood == 1}">😢</c:when>
-                            <c:otherwise>😊</c:otherwise>
-                        </c:choose>
+        <div class="row mb-3">
+            <div class="col-12">
+              <div class="stats-card">
+                <h2>How are you feeling today?</h2>
+                <c:if test="${streak > 0}">
+                    <div class="streak-badge">
+                        <i class="fas fa-fire me-2"></i>${streak} Day Streak!
                     </div>
-                    <div class="stat-value">
-                        <c:choose>
-                            <c:when test="${mostCommonMood == 5}">Excellent</c:when>
-                            <c:when test="${mostCommonMood == 4}">Good</c:when>
-                            <c:when test="${mostCommonMood == 3}">Okay</c:when>
-                            <c:when test="${mostCommonMood == 2}">Not Great</c:when>
-                            <c:when test="${mostCommonMood == 1}">Struggling</c:when>
-                            <c:otherwise>-</c:otherwise>
-                        </c:choose>
-                    </div>
-                    <div class="stat-label">Most Common Mood</div>
-                </div>
+                </c:if>
+              </div>
             </div>
         </div>
 

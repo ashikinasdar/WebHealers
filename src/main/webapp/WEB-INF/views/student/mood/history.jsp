@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 pageEncoding="UTF-8"%> <%@ taglib prefix="c"
 uri="http://java.sun.com/jsp/jstl/core" %> <%@ taglib prefix="fmt"
-uri="http://java.sun.com/jsp/jstl/fmt" %>
+uri="http://java.sun.com/jsp/jstl/fmt" %> <%@ taglib prefix="fn"
+uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -16,6 +17,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
       rel="stylesheet"
     />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
       body {
         background: #f5f7fa;
@@ -70,52 +72,107 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
         font-weight: 600;
         margin: 0;
       }
+      .stat-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        text-align: center;
+        height: 100%;
+      }
+      .stat-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+      }
+      .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 5px;
+      }
+      .stat-label {
+        color: #718096;
+        font-size: 0.9rem;
+      }
       .checkin-card {
         background: white;
-        border-radius: 15px;
+        border-radius: 25px;
+        padding: 40px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        margin-bottom: 20px;
+      }
+      .mood-selector {
+        display: flex;
+        justify-content: space-around;
+        margin: 30px 0;
+        gap: 15px;
+      }
+      .mood-option {
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        flex: 1;
         padding: 20px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        margin-bottom: 15px;
+        border-radius: 15px;
+        border: 3px solid transparent;
+      }
+      .mood-option:hover {
+        transform: translateY(-5px);
+        background: #f8f9fa;
+      }
+      .mood-option.selected {
+        border-color: #667eea;
+        background: #f0f4ff;
+      }
+      .mood-option input[type="radio"] {
+        display: none;
+      }
+      .mood-icon {
+        font-size: 3rem;
+        margin-bottom: 10px;
         transition: all 0.3s;
       }
-      .checkin-card:hover {
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      .mood-option:hover .mood-icon {
+        transform: scale(1.1);
       }
-      .mood-icon-large {
-        font-size: 3rem;
-      }
-      .mood-badge {
-        padding: 8px 20px;
-        border-radius: 20px;
+      .mood-label {
         font-weight: 600;
-        display: inline-block;
+        color: #2d3748;
+        font-size: 0.9rem;
       }
-      .mood-5 {
-        background: #d4edda;
-        color: #155724;
+      .notes-section {
+        margin: 30px 0;
       }
-      .mood-4 {
-        background: #d1ecf1;
-        color: #0c5460;
+      .btn-checkin {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        padding: 15px 50px;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        transition: all 0.3s;
+        width: 100%;
       }
-      .mood-3 {
-        background: #fff3cd;
-        color: #856404;
+      .btn-checkin:hover {
+        transform: scale(1.02);
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
       }
-      .mood-2 {
-        background: #f8d7da;
-        color: #721c24;
-      }
-      .mood-1 {
-        background: #f5c6cb;
-        color: #721c24;
-      }
-      .filter-section {
-        background: white;
+      .already-checked-in {
+        background: #e6f3ff;
+        border-left: 5px solid #667eea;
+        padding: 25px;
         border-radius: 15px;
-        padding: 20px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         margin-bottom: 20px;
+      }
+      .mood-display {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-top: 15px;
+      }
+      .mood-display-icon {
+        font-size: 3rem;
       }
     </style>
   </head>
@@ -183,35 +240,67 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
       <!-- Top Navbar -->
       <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
-          <h4 class="mb-0"><i class="fas fa-history me-2"></i>Mood History</h4>
-          <a
-            href="${pageContext.request.contextPath}/student/mood/checkin"
-            class="btn btn-primary"
-          >
-            <i class="fas fa-plus me-2"></i>New Check-in
-          </a>
+          <h4 class="mb-0">
+            <i class="fas fa-history me-2"></i>Mood History
+          </h4>
+          <div>
+            <a
+              href="${pageContext.request.contextPath}/student/mood/checkin"
+              class="btn btn-primary"
+            >
+              <i class="fas fa-plus me-2"></i>Check In
+            </a>
+          </div>
         </div>
       </nav>
 
-      <!-- Filter Section -->
-      <div class="filter-section">
-        <div class="d-flex gap-2 align-items-center">
-          <span><strong>Show:</strong></span>
-          <a
-            href="?days=7"
-            class="btn btn-sm ${days == 7 ? 'btn-primary' : 'btn-outline-primary'}"
-            >Last 7 Days</a
-          >
-          <a
-            href="?days=30"
-            class="btn btn-sm ${days == 30 ? 'btn-primary' : 'btn-outline-primary'}"
-            >Last 30 Days</a
-          >
-          <a
-            href="?days=90"
-            class="btn btn-sm ${days == 90 ? 'btn-primary' : 'btn-outline-primary'}"
-            >Last 3 Months</a
-          >
+      <!-- Stats Grid -->
+      <div class="row g-3 mb-4">
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon">📊</div>
+            <div class="stat-value">${totalCheckins}</div>
+            <div class="stat-label">Total Check-ins</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-value">${averageMood}</div>
+            <div class="stat-label">Average Mood</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon">🔥</div>
+            <div class="stat-value">${streak}</div>
+            <div class="stat-label">Day Streak</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <c:choose>
+                <c:when test="${mostCommonMood == 5}">😄</c:when>
+                <c:when test="${mostCommonMood == 4}">😊</c:when>
+                <c:when test="${mostCommonMood == 3}">😐</c:when>
+                <c:when test="${mostCommonMood == 2}">😟</c:when>
+                <c:when test="${mostCommonMood == 1}">😢</c:when>
+                <c:otherwise>😊</c:otherwise>
+              </c:choose>
+            </div>
+            <div class="stat-value">
+              <c:choose>
+                <c:when test="${mostCommonMood == 5}">Excellent</c:when>
+                <c:when test="${mostCommonMood == 4}">Good</c:when>
+                <c:when test="${mostCommonMood == 3}">Okay</c:when>
+                <c:when test="${mostCommonMood == 2}">Not Great</c:when>
+                <c:when test="${mostCommonMood == 1}">Struggling</c:when>
+                <c:otherwise>-</c:otherwise>
+              </c:choose>
+            </div>
+            <div class="stat-label">Most Common Mood</div>
+          </div>
         </div>
       </div>
 
