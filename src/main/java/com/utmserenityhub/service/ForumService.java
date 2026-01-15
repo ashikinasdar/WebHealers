@@ -5,6 +5,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.utmserenityhub.dao.ForumDAO;
+
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +16,7 @@ public class ForumService {
     
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    private ForumDAO forumDAO; 
     
     /*Create a new forum thread*/
     public int createThread(int studentId, String title, String content, boolean isAnonymous) {
