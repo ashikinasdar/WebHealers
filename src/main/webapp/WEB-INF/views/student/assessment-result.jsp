@@ -262,7 +262,7 @@
                                             <i class="fas fa-eye me-1"></i>View Full Details
                                         </button>
                                         <c:if test="${result.overallSeverity == 'SEVERE' || result.overallSeverity == 'EXTREMELY_SEVERE'}">
-                                            <button onclick="window.location.href='${pageContext.request.contextPath}/student/appointments/book'" 
+                                            <button onclick="window.location.href='${pageContext.request.contextPath}/student/appointments'" 
                                                     class="btn btn-sm btn-danger">
                                                 <i class="fas fa-calendar-plus me-1"></i>Book Counseling
                                             </button>
@@ -365,7 +365,7 @@
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <button onclick="window.location.href='${pageContext.request.contextPath}/student/appointments/book'" 
+                                            <button onclick="window.location.href='${pageContext.request.contextPath}/student/appointments'" 
                                                     class="btn btn-primary">
                                                 <i class="fas fa-calendar-plus me-1"></i>Book Appointment
                                             </button>
@@ -418,7 +418,7 @@
                                         class="btn btn-outline-primary">
                                     <i class="fas fa-plus-circle me-2"></i>Take New Assessment
                                 </button>
-                                <button onclick="window.location.href='${pageContext.request.contextPath}/student/appointments/book'" 
+                                <button onclick="window.location.href='${pageContext.request.contextPath}/student/appointments'" 
                                         class="btn btn-outline-success">
                                     <i class="fas fa-calendar-plus me-2"></i>Book Counseling
                                 </button>
@@ -439,7 +439,7 @@
                                 please reach out for professional support.
                             </p>
                             <div class="d-grid">
-                                <button onclick="window.location.href='${pageContext.request.contextPath}/student/appointments/book'" 
+                                <button onclick="window.location.href='${pageContext.request.contextPath}/student/appointments'" 
                                         class="btn btn-warning">
                                     <i class="fas fa-phone me-2"></i>Contact Counselor
                                 </button>

@@ -304,7 +304,7 @@
                             </a>
                             <c:if
                                 test="${result.overallSeverity == 'SEVERE' || result.overallSeverity == 'EXTREMELY_SEVERE'}">
-                                <a href="${pageContext.request.contextPath}/student/appointments/book"
+                                <a href="${pageContext.request.contextPath}/student/appointments"
                                     class="btn btn-danger">
                                     <i class="fas fa-calendar-plus me-2"></i>Book Counseling Appointment
                                 </a>
