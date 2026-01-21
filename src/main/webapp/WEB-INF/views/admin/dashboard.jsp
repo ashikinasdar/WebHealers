@@ -153,6 +153,9 @@
             <a class="nav-link" href="${pageContext.request.contextPath}/admin/forum">
                 <i class="fas fa-comments"></i> Forum Management
             </a>
+            <a class="nav-link " href="${pageContext.request.contextPath}/admin/feedback/list">
+                <i class="fas fa-comment-dots"></i> Feedback List
+            </a>
             <a class="nav-link" href="${pageContext.request.contextPath}/admin/reports">
                 <i class="fas fa-chart-bar"></i> Reports
             </a>

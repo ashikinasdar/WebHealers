@@ -35,6 +35,9 @@ public class AdminController {
     @Autowired
     private ForumService forumService;
 
+    @Autowired
+    private FeedbackService feedbackService;
+
     /*admin dashboard*/
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
@@ -345,5 +348,26 @@ public class AdminController {
         // patutnya generate a PDF report, tapi tak berfungsi lagi
         // implementation kena guna iText library
         return "redirect:/admin/reports";
+    }
+
+    // View all feedback (Admin)
+    @GetMapping("/feedback/list") // This maps to /admin/feedback/list
+    public String listFeedback(Model model) {
+        model.addAttribute("feedbackList", feedbackService.getAllFeedback());
+        return "admin/feedback_list"; // /WEB-INF/views/feedback_list.jsp
+    }
+
+    // Delete feedback (Admin)
+    @GetMapping("/feedback/delete/{id}")
+    public String deleteFeedback(@PathVariable Long id) {
+        feedbackService.deleteFeedback(id);
+        return "redirect:/admin/feedback/list";
+    }
+
+    @PostMapping("/feedback/resolve/{id}")
+    public String resolveFeedback(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        feedbackService.resolveFeedback(id);
+        redirectAttributes.addFlashAttribute("success", "Feedback marked as resolved");
+        return "redirect:/admin/feedback/list";
     }
 }
