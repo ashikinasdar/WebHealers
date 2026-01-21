@@ -183,73 +183,64 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
         <div class="brand-logo">
           <i class="fas fa-heart"></i>
         </div>
-        <p class="brand-text">SerenityHub</p>
-      </div>
-      <nav class="nav flex-column mt-4">
-        <a
-          class="nav-link"
-          href="${pageContext.request.contextPath}/student/dashboard"
-        >
-          <i class="fas fa-home"></i> Dashboard
-        </a>
-        <a
-          class="nav-link"
-          href="${pageContext.request.contextPath}/student/learning"
-        >
-          <i class="fas fa-book"></i> Learning
-        </a>
-        <a
-          class="nav-link"
-          href="${pageContext.request.contextPath}/student/assessments"
-        >
-          <i class="fas fa-clipboard-check"></i> Assessments
-        </a>
-        <a
-          class="nav-link"
-          href="${pageContext.request.contextPath}/student/appointments"
-        >
-          <i class="fas fa-calendar"></i> Counseling
-        </a>
-        <a
-          class="nav-link"
-          href="${pageContext.request.contextPath}/student/forum"
-        >
-          <i class="fas fa-comments"></i> Forum
-        </a>
-        <a class="nav-link " href="${pageContext.request.contextPath}/student/feedback">
-                            <i class="fas fa-comment-dots"></i> Feedback
-                        </a>
-        <a
-          class="nav-link"
-          href="${pageContext.request.contextPath}/student/mood/checkin"
-        >
-          <i class="fas fa-smile"></i> Mood Tracker
-        </a>
-        <a
-          class="nav-link active"
-          href="${pageContext.request.contextPath}/student/chatbot"
-        >
-          <i class="fas fa-robot"></i> Chatbot
-        </a>
-        <a
-          class="nav-link"
-          href="${pageContext.request.contextPath}/student/profile"
-        >
-          <i class="fas fa-user"></i> Profile
-        </a>
-        <hr style="border-color: rgba(255, 255, 255, 0.1); margin: 20px 25px" />
-        <a class="nav-link" href="${pageContext.request.contextPath}/logout">
-          <i class="fas fa-sign-out-alt"></i> Logout
-        </a>
-      </nav>
+        <nav class="nav flex-column mt-4">
+            <a class="nav-link " href="${pageContext.request.contextPath}/student/dashboard">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a class="nav-link" href="${pageContext.request.contextPath}/student/learning">
+                <i class="fas fa-book"></i> Learning
+            </a>
+            <a class="nav-link" href="${pageContext.request.contextPath}/student/assessments">
+                <i class="fas fa-clipboard-check"></i> Assessments
+            </a>
+            <a class="nav-link" href="${pageContext.request.contextPath}/student/appointments">
+                <i class="fas fa-calendar"></i> Counseling
+            </a>
+            <a class="nav-link" href="${pageContext.request.contextPath}/student/forum">
+                <i class="fas fa-comments"></i> Forum
+            </a>
+            <a class="nav-link" href="${pageContext.request.contextPath}/student/mood/checkin">
+                <i class="fas fa-smile"></i> Mood Tracker
+            </a>
+            <a class="nav-link active" href="${pageContext.request.contextPath}/student/chatbot">
+                <i class="fas fa-robot"></i> Chatbot
+            </a>
+            <a class="nav-link" href="${pageContext.request.contextPath}/student/profile">
+                <i class="fas fa-user"></i> Profile
+            </a>
+            <hr style="border-color: rgba(255,255,255,0.1); margin: 20px 25px;">
+            <a class="nav-link" href="${pageContext.request.contextPath}/logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </nav>
+
+
     </div>
 
     <!-- Main Content -->
     <div class="main-content">
-      <nav class="navbar navbar-expand-lg navbar-light rounded">
-        <div class="container-fluid">
-          <h4><i class="fas fa-robot me-2"></i> Mental Health Chatbot</h4>
-          <p class="text-muted">Talk to Serenity AI for support</p>
+
+        <nav class="navbar navbar-expand-lg navbar-light rounded">
+            <div class="container-fluid">
+                <h4><i class="fas fa-robot me-2"></i> Mental Health Chatbot</h4>
+                <p class="text-muted">Talk to Serenity AI for support</p>
+            </div>
+        </nav>
+
+        <div class="chat-window mt-3">
+            <div class="chat-messages" id="chatMessages">
+                <div class="message-bot">
+                    Hello! How are you feeling today?
+                </div>
+            </div>
+
+            <div class="chat-input">
+                <textarea id="userInput" class="form-control" rows="1"
+                    placeholder="Type your message..."></textarea>
+                <button class="btn btn-primary" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
         </div>
       </nav>
 
