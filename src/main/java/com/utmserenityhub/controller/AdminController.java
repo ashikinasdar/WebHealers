@@ -38,7 +38,7 @@ public class AdminController {
     @Autowired
     private FeedbackService feedbackService;
 
-    /*admin dashboard*/
+    /* admin dashboard */
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
         Map<String, Integer> userStats = userService.getUserStatistics();
@@ -66,7 +66,7 @@ public class AdminController {
         return "admin/dashboard";
     }
 
-    /*view all users*/
+    /* view all users */
     @GetMapping("/users")
     public String manageUsers(@RequestParam(required = false) String type, Model model) {
         List<User> users;
@@ -83,7 +83,7 @@ public class AdminController {
         return "admin/users";
     }
 
-    /*view user details*/
+    /* view user details */
     @GetMapping("/user/{userId}")
     public String viewUser(@PathVariable int userId, Model model) {
         User user = userService.findById(userId);
@@ -105,14 +105,14 @@ public class AdminController {
         return "admin/user-details";
     }
 
-    /*create user form*/
+    /* create user form */
     @GetMapping("/user/create")
     public String createUserForm(Model model) {
         model.addAttribute("user", new User());
         return "admin/user-create";
     }
 
-    /*create user*/
+    /* create user */
     @PostMapping("/user/create")
     public String createUser(@ModelAttribute User user,
             @RequestParam String password,
@@ -140,7 +140,7 @@ public class AdminController {
         }
     }
 
-    /*edit user form*/
+    /* edit user form */
     @GetMapping("/user/{userId}/edit")
     public String editUserForm(@PathVariable int userId, Model model) {
         User user = userService.findById(userId);
@@ -159,7 +159,7 @@ public class AdminController {
         return "admin/user-edit";
     }
 
-    /*update user*/
+    /* update user */
     @PostMapping("/user/{userId}/update")
     public String updateUser(@PathVariable int userId,
             @ModelAttribute User user,
@@ -176,7 +176,7 @@ public class AdminController {
         return "redirect:/admin/user/" + userId;
     }
 
-    /*deactivate user*/
+    /* deactivate user */
     @PostMapping("/user/{userId}/deactivate")
     public String deactivateUser(@PathVariable int userId, RedirectAttributes redirectAttributes) {
         boolean success = userService.deactivateUser(userId);
@@ -190,7 +190,7 @@ public class AdminController {
         return "redirect:/admin/users";
     }
 
-    /*activate user*/
+    /* activate user */
     @PostMapping("/user/{userId}/activate")
     public String activateUser(@PathVariable int userId, RedirectAttributes redirectAttributes) {
         boolean success = userService.activateUser(userId);
@@ -204,7 +204,7 @@ public class AdminController {
         return "redirect:/admin/users";
     }
 
-    /*delete user*/
+    /* delete user */
     @PostMapping("/user/{userId}/delete")
     public String deleteUser(@PathVariable int userId, RedirectAttributes redirectAttributes) {
         boolean success = userService.deleteUser(userId);
@@ -218,7 +218,7 @@ public class AdminController {
         return "redirect:/admin/users";
     }
 
-    /*manage learning modules*/
+    /* manage learning modules */
     @GetMapping("/modules")
     public String manageModules(Model model) {
         List<LearningModule> modules = moduleService.getAllModules();
@@ -226,14 +226,14 @@ public class AdminController {
         return "admin/modules";
     }
 
-    /*create module form*/
+    /* create module form */
     @GetMapping("/module/create")
     public String createModuleForm(Model model) {
         model.addAttribute("module", new LearningModule());
         return "admin/module-create";
     }
 
-    /*create module*/
+    /* create module */
     @PostMapping("/module/create")
     public String createModule(@ModelAttribute LearningModule module,
             HttpSession session,
@@ -251,7 +251,7 @@ public class AdminController {
         }
     }
 
-    /*edit module form*/
+    /* edit module form */
     @GetMapping("/module/{moduleId}/edit")
     public String editModuleForm(@PathVariable int moduleId, Model model) {
         LearningModule module = moduleService.getModuleById(moduleId);
@@ -264,7 +264,7 @@ public class AdminController {
         return "admin/module-edit";
     }
 
-    /*update module*/
+    /* update module */
     @PostMapping("/module/{moduleId}/update")
     public String updateModule(@PathVariable int moduleId,
             @ModelAttribute LearningModule module,
@@ -280,7 +280,7 @@ public class AdminController {
         return "redirect:/admin/modules";
     }
 
-    /*module status*/
+    /* module status */
     @PostMapping("/module/{moduleId}/toggle")
     public String toggleModuleStatus(@PathVariable int moduleId,
             @RequestParam boolean active,
@@ -296,7 +296,7 @@ public class AdminController {
         return "redirect:/admin/modules";
     }
 
-    /*delete module*/
+    /* delete module */
     @PostMapping("/module/{moduleId}/delete")
     public String deleteModule(@PathVariable int moduleId, RedirectAttributes redirectAttributes) {
         boolean success = moduleService.deleteModule(moduleId);
@@ -310,7 +310,7 @@ public class AdminController {
         return "redirect:/admin/modules";
     }
 
-    /*manage forum*/
+    /* manage forum */
     @GetMapping("/forum")
     public String manageForum(Model model) {
         List<Map<String, Object>> threads = forumService.getAllThreads();
@@ -318,7 +318,7 @@ public class AdminController {
         return "admin/forum";
     }
 
-    /*delete forum thread*/
+    /* delete forum thread */
     @PostMapping("/forum/thread/{threadId}/delete")
     public String deleteThread(@PathVariable int threadId, RedirectAttributes redirectAttributes) {
         boolean success = forumService.deleteThread(threadId);
@@ -332,7 +332,7 @@ public class AdminController {
         return "redirect:/admin/forum";
     }
 
-    /*report page*/
+    /* report page */
     @GetMapping("/reports")
     public String reports(Model model) {
         model.addAttribute("userStats", userService.getUserStatistics());
@@ -342,7 +342,7 @@ public class AdminController {
         return "admin/reports";
     }
 
-    /*export report*/
+    /* export report */
     @GetMapping("/reports/users/export")
     public String exportUserReport() {
         // patutnya generate a PDF report, tapi tak berfungsi lagi
@@ -350,24 +350,70 @@ public class AdminController {
         return "redirect:/admin/reports";
     }
 
-    // View all feedback (Admin)
-    @GetMapping("/feedback/list") // This maps to /admin/feedback/list
-    public String listFeedback(Model model) {
-        model.addAttribute("feedbackList", feedbackService.getAllFeedback());
-        return "admin/feedback_list"; // /WEB-INF/views/feedback_list.jsp
+    // View all feedback (Admin) with filters
+    @GetMapping("/feedback/list")
+    public String listFeedback(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String status,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            Boolean resolved = null;
+            if ("resolved".equals(status)) {
+                resolved = true;
+            } else if ("pending".equals(status)) {
+                resolved = false;
+            }
+
+            // Delegate to service - validation happens there
+            List<Feedback> feedbackList = feedbackService.getFilteredFeedback(category, resolved);
+
+            model.addAttribute("feedbackList", feedbackList);
+            model.addAttribute("selectedCategory", category != null ? category : "all");
+            model.addAttribute("selectedStatus", status != null ? status : "all");
+
+            return "admin/feedback_list";
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/admin/feedback/list";
+        }
     }
 
     // Delete feedback (Admin)
     @GetMapping("/feedback/delete/{id}")
-    public String deleteFeedback(@PathVariable Long id) {
-        feedbackService.deleteFeedback(id);
+    public String deleteFeedback(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            feedbackService.deleteFeedback(id);
+            redirectAttributes.addFlashAttribute("success", "Feedback deleted successfully");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to delete feedback");
+        }
         return "redirect:/admin/feedback/list";
     }
 
     @PostMapping("/feedback/resolve/{id}")
-    public String resolveFeedback(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        feedbackService.resolveFeedback(id);
-        redirectAttributes.addFlashAttribute("success", "Feedback marked as resolved");
+    public String resolveFeedback(@PathVariable Long id,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
+        try {
+            // Get the logged-in admin's user ID from session
+            Integer adminUserId = (Integer) session.getAttribute("userId");
+
+            if (adminUserId == null) {
+                redirectAttributes.addFlashAttribute("error", "Session expired. Please login again.");
+                return "redirect:/login";
+            }
+
+            feedbackService.resolveFeedback(id, adminUserId);
+            redirectAttributes.addFlashAttribute("success", "Feedback marked as resolved");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to resolve feedback");
+        }
         return "redirect:/admin/feedback/list";
     }
 }

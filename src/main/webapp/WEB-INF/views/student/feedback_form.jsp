@@ -19,6 +19,7 @@
                     .sidebar {
                         min-height: 100vh;
                         background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+                        padding: 0;
                         position: fixed;
                         width: 250px;
                     }
@@ -47,10 +48,35 @@
                         padding: 20px;
                     }
 
+                    .navbar {
+                        background: white;
+                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                        margin-bottom: 30px;
+                    }
+
                     .card {
                         border-radius: 15px;
                         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
                         padding: 25px;
+                    }
+
+                    .brand-section {
+                        padding: 30px 25px;
+                        text-align: center;
+                        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                    }
+
+                    .brand-logo {
+                        font-size: 32px;
+                        color: white;
+                        margin-bottom: 5px;
+                    }
+
+                    .brand-text {
+                        color: white;
+                        font-size: 18px;
+                        font-weight: 600;
+                        margin: 0;
                     }
                 </style>
             </head>
@@ -58,7 +84,7 @@
             <body>
                 <!-- Sidebar -->
                 <div class="sidebar">
-                    <div class="brand-section text-center py-4">
+                    <div class="brand-section">
                         <div class="brand-logo"><i class="fas fa-heart"></i></div>
                         <p class="brand-text">SerenityHub</p>
                     </div>
@@ -83,6 +109,14 @@
                             <i class="fas fa-comment-dots"></i> Feedback
                         </a>
 
+                        <a class="nav-link" href="${pageContext.request.contextPath}/student/mood/checkin">
+                            <i class="fas fa-smile"></i> Mood Tracker
+                        </a>
+
+                        <a class="nav-link" href="${pageContext.request.contextPath}/student/chatbot">
+                            <i class="fas fa-robot"></i> Chatbot
+                        </a>
+
                         <a class="nav-link" href="${pageContext.request.contextPath}/student/profile">
                             <i class="fas fa-user"></i> Profile
                         </a>
@@ -101,9 +135,18 @@
                         </div>
                     </nav>
 
+                    <!-- Success Message (already exists) -->
                     <c:if test="${not empty success}">
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            ${success}
+                            <i class="fas fa-check-circle me-2"></i>${success}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    </c:if>
+
+                    <!-- ADD THIS: Error Message -->
+                    <c:if test="${not empty error}">
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>${error}
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     </c:if>
@@ -112,16 +155,25 @@
                         <form:form method="POST" action="${pageContext.request.contextPath}/student/feedback/save"
                             modelAttribute="feedback">
                             <div class="mb-3">
-                                <label class="form-label">Username</label>
-                                <form:input path="username" cssClass="form-control"  />
+                                <label class="form-label">
+                                    Username <span class="text-danger">*</span>
+                                </label>
+                                <form:input path="username" cssClass="form-control" placeholder="Enter your username" required="true" maxlength="100"/>
+                                <small class="form-text text-muted">Maximum 100 characters</small>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Title</label>
-                                <form:input path="title" cssClass="form-control" />
+                                <label class="form-label">
+                                    Title <span class="text-danger">*</span>
+                                </label>
+                                <form:input path="title" cssClass="form-control" placeholder="Brief title for your feedback" required="true" maxlength="200"/>
+                                <small class="form-text text-muted">Maximum 200 characters</small>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Category</label>
-                                <form:select path="category" cssClass="form-select">
+                                <label class="form-label">
+                                    Category <span class="text-danger">*</span>
+                                </label>
+                                <form:select path="category" cssClass="form-select" required="true">
+                                    <form:option value="" label="-- Select Category --" disabled="true" selected="true"/>
                                     <form:option value="Usability" label="Usability" />
                                     <form:option value="Content" label="Content" />
                                     <form:option value="Bug" label="Bug" />
@@ -129,14 +181,24 @@
                                 </form:select>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Message</label>
-                                <form:textarea path="message" rows="4" cssClass="form-control" />
+                                <label class="form-label">
+                                    Message <span class="text-danger">*</span>
+                                </label>
+                                <form:textarea path="message" rows="5" cssClass="form-control" 
+                                    placeholder="Describe your feedback in detail..." 
+                                    required="true" maxlength="2000"/>
+                                <small class="form-text text-muted">Maximum 2000 characters</small>
                             </div>
-                            <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane me-2"></i>Submit
-                                Feedback</button>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <span class="text-danger">*</span> Required fields
+                                </small>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane me-2"></i>Submit Feedback
+                                </button>
+                            </div>
                         </form:form>
-
-
                     </div>
                 </div>
 

@@ -192,11 +192,52 @@
                 <span class="text-muted">${feedbackList.size()} total feedback(s)</span>
             </div>
 
+            <!-- Filter Section -->
+            <div class="card mb-4" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px;">
+                <div class="card-body">
+                    <form method="get" action="${pageContext.request.contextPath}/admin/feedback/list" class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-filter me-2"></i>Filter by Category
+                            </label>
+                            <select name="category" class="form-select" onchange="this.form.submit()">
+                                <option value="all" ${selectedCategory == 'all' ? 'selected' : ''}>All Categories</option>
+                                <option value="Usability" ${selectedCategory == 'Usability' ? 'selected' : ''}>Usability</option>
+                                <option value="Content" ${selectedCategory == 'Content' ? 'selected' : ''}>Content</option>
+                                <option value="Bug" ${selectedCategory == 'Bug' ? 'selected' : ''}>Bug</option>
+                                <option value="Other" ${selectedCategory == 'Other' ? 'selected' : ''}>Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-tasks me-2"></i>Filter by Status
+                            </label>
+                            <select name="status" class="form-select" onchange="this.form.submit()">
+                                <option value="all" ${selectedStatus == 'all' ? 'selected' : ''}>All Status</option>
+                                <option value="pending" ${selectedStatus == 'pending' ? 'selected' : ''}>Pending</option>
+                                <option value="resolved" ${selectedStatus == 'resolved' ? 'selected' : ''}>Resolved</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">&nbsp;</label>
+                            <div class="d-grid">
+                                <a href="${pageContext.request.contextPath}/admin/feedback/list" class="btn btn-outline-secondary">
+                                    <i class="fas fa-redo me-2"></i>Clear Filters
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <c:choose>
                 <c:when test="${empty feedbackList}">
                     <div class="text-center text-muted py-5">
                         <i class="fas fa-inbox fa-3x mb-3"></i>
-                        <p>No feedback submissions yet</p>
+                        <p>No feedback found matching your filters</p>
+                        <a href="${pageContext.request.contextPath}/admin/feedback/list" class="btn btn-primary mt-2">
+                            <i class="fas fa-list me-2"></i>View All Feedback
+                        </a>
                     </div>
                 </c:when>
                 <c:otherwise>
@@ -220,11 +261,38 @@
                                             </c:otherwise>
                                         </c:choose>
                                     </div>
+                                    
+                                    <!-- User info -->
                                     <p class="text-muted mb-2 small">
                                         <i class="fas fa-user me-2"></i>
                                         <strong>From:</strong> ${fb.username}
                                     </p>
-                                    <p class="mb-0">${fb.message}</p>
+                                    
+                                    <!-- Submitted timestamp -->
+                                    <p class="text-muted mb-2 small">
+                                        <i class="fas fa-calendar-alt me-2"></i>
+                                        <strong>Submitted:</strong> 
+                                        <c:choose>
+                                            <c:when test="${fb.createdAt != null}">
+                                                <fmt:formatDate value="${fb.createdAt}" pattern="MMM dd, yyyy 'at' hh:mm a" />
+                                            </c:when>
+                                            <c:otherwise>
+                                                N/A
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </p>
+                                    
+                                    <!-- Resolved timestamp (only show if resolved) -->
+                                    <c:if test="${fb.resolved && fb.resolvedAt != null}">
+                                        <p class="text-muted mb-2 small">
+                                            <i class="fas fa-check-circle me-2"></i>
+                                            <strong>Resolved:</strong> 
+                                            <fmt:formatDate value="${fb.resolvedAt}" pattern="MMM dd, yyyy 'at' hh:mm a" />
+                                        </p>
+                                    </c:if>
+                                    
+                                    <!-- Feedback message -->
+                                    <p class="mb-0 mt-2">${fb.message}</p>
                                 </div>
                                 <div class="d-flex flex-column ms-3">
                                     <c:if test="${!fb.resolved}">

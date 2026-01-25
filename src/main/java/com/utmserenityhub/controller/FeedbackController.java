@@ -27,9 +27,19 @@ public class FeedbackController {
     // Submit feedback
     @PostMapping("/save")
     public String saveFeedback(@ModelAttribute Feedback feedback, RedirectAttributes redirectAttributes) {
-        feedbackService.saveFeedback(feedback);
-        redirectAttributes.addFlashAttribute("success", "Feedback submitted successfully!");
-        return "redirect:/student/feedback"; // go back to the form
+        try {
+            // Delegate to service - all business logic happens there
+            feedbackService.saveFeedback(feedback);
+            redirectAttributes.addFlashAttribute("success", "Feedback submitted successfully!");
+        } catch (IllegalArgumentException e) {
+            // Handle validation errors from service
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        } catch (Exception e) {
+            // Handle unexpected errors
+            redirectAttributes.addFlashAttribute("error", "Failed to submit feedback. Please try again.");
+        }
+        
+        return "redirect:/student/feedback";
     }
 
     
