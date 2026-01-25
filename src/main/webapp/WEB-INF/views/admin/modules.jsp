@@ -143,6 +143,9 @@
             <a class="nav-link" href="${pageContext.request.contextPath}/admin/reports">
                 <i class="fas fa-chart-bar"></i> Reports
             </a>
+            <a class="nav-link " href="${pageContext.request.contextPath}/admin/feedback/list">
+                <i class="fas fa-comment-dots"></i> Feedback List
+            </a>
             <hr style="border-color: rgba(255,255,255,0.1); margin: 20px 25px;">
             <a class="nav-link" href="${pageContext.request.contextPath}/logout">
                 <i class="fas fa-sign-out-alt"></i> Logout
